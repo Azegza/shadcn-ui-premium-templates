@@ -120,24 +120,27 @@ function useCountUp(target: number) {
 function SpinningBorder() {
   return (
     <>
-      {/* Spinning gradient layer */}
-      <div
-        aria-hidden="true"
-        className="animate-border-spin pointer-events-none absolute -inset-[1.5px] rounded-[17px]"
-        style={{
-          background:
-            "conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(139,92,246,0.95) 50deg, rgba(59,130,246,0.85) 90deg, transparent 130deg)",
-        }}
-      />
-      {/* Glow halo — blurred duplicate */}
-      <div
-        aria-hidden="true"
-        className="animate-border-spin pointer-events-none absolute -inset-[4px] rounded-[20px] opacity-40 blur-lg"
-        style={{
-          background:
-            "conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(139,92,246,0.9) 50deg, rgba(59,130,246,0.8) 90deg, transparent 130deg)",
-        }}
-      />
+      {/* Sharp border container — clips the large spinning element to the card's shape */}
+      <div className="pointer-events-none absolute -inset-[1.5px] rounded-[17px] overflow-hidden" aria-hidden="true">
+        <div
+          className="animate-border-spin absolute left-1/2 top-1/2 aspect-square w-[250%] -translate-x-1/2 -translate-y-1/2"
+          style={{
+            background:
+              "conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(139,92,246,0.95) 50deg, rgba(59,130,246,0.85) 90deg, transparent 130deg)",
+          }}
+        />
+      </div>
+      
+      {/* Glow halo — spins freely, blurred, creates a searchlight effect */}
+      <div className="pointer-events-none absolute -inset-[4px] rounded-[20px] opacity-40 blur-lg" aria-hidden="true">
+        <div
+          className="animate-border-spin absolute left-1/2 top-1/2 aspect-square w-[250%] -translate-x-1/2 -translate-y-1/2"
+          style={{
+            background:
+              "conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(139,92,246,0.9) 50deg, rgba(59,130,246,0.8) 90deg, transparent 130deg)",
+          }}
+        />
+      </div>
     </>
   );
 }
