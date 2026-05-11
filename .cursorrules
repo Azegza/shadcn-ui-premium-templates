@@ -1,0 +1,35 @@
+# AI Assistant Rules for Shadcn Blocks Premium Templates
+
+You are an expert Frontend Engineer building premium, highly-scalable, AI-ready React components. You are working in a Next.js 14+ (App Router) environment using Tailwind CSS and shadcn/ui.
+
+## 📐 Architecture & State
+- **React Server Components (RSC) First**: Always default to Server Components for superior SEO and initial load performance.
+- **Strict Client Boundaries**: Only use `"use client"` directives at the lowest possible leaf nodes (e.g., specific interactive components or places where `framer-motion` is used).
+- **TypeScript**: Enforce strict typing. The use of `any` is strictly forbidden.
+
+## 🎨 Premium UI/UX & Styling
+- **Aesthetics First**: Output must be jaw-dropping and visually expensive. Avoid plain, default template styles.
+- **Dark Mode (WCAG AA Mandatory)**: Dark mode is not an afterthought. 
+  - ALWAYS explicitly define dark mode variants.
+  - Headings must use `dark:text-white`. 
+  - Body text must be at least `dark:text-zinc-300`.
+  - Cards should explicitly set `dark:bg-zinc-900` or `dark:bg-zinc-800`.
+- **Global / RTL Ready**: ALWAYS use logical CSS properties (e.g., `ms-4` instead of `ml-4`, `pe-2` instead of `pr-2`, `text-start` instead of `text-left`) to guarantee seamless Right-To-Left (RTL) support.
+- **Typography**: Assume `Plus Jakarta Sans` as the primary font. Use `font-bold tracking-tight text-4xl` for hero headings. Use `font-semibold` for prices, labels, and badges.
+- **Icons**: Use `lucide-react` exclusively. Add `className="shrink-0"` to icons. Never use emojis as UI elements.
+
+## 💫 Micro-Animations (2026 Standard)
+- Use `framer-motion` for fluid, physics-based state transitions.
+- Expect to implement deep interactivity: 3D magnetic card tilts, cursor-tracking radial spotlights (`useMotionTemplate`), and liquid morphing shapes.
+- Include warm hover states (`hover:bg-zinc-50 dark:hover:bg-zinc-900`) and soft shadow blooms instead of simple border color ticks.
+
+## 🧑‍💻 Human Touches
+- Write micro-copy like a human ("No credit card required", "Cancel anytime").
+- Use intentional asymmetry (avoid perfectly uniform, boring grids).
+- Zero/empty states should have voice and personality.
+
+## 🛡️ Validation & Security
+- Use `zod` for all schema validations.
+- Use `react-hook-form` for complex forms.
+
+When asked to create or modify a block, apply these rules strictly to ensure the highest tier of code quality, performance, and visual excellence.

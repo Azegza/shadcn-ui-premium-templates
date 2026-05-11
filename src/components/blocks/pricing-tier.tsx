@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import type { BezierDefinition } from "framer-motion";
 import { motion, AnimatePresence, animate, useMotionValue, useMotionTemplate, useTransform, useSpring } from "framer-motion";
 import { Check, X, Zap, ShieldCheck, Crown, ArrowRight, Star, Lock, Headphones, CircleDollarSign } from "lucide-react";
@@ -197,7 +197,7 @@ function FeatureRow({ feature }: { feature: PricingFeature }) {
 
 
 // ─── Pricing Card (Interactive Sizzle) ───────────────────────────────────────
-function PricingCard({ tier, isAnnual, period, currencySymbol, onSelectPlan }: { tier: PricingTier; isAnnual: boolean; period: string; currencySymbol: string; onSelectPlan?: (id: string, period: string) => void }) {
+function PricingCard({ tier, isAnnual, period, currencySymbol, onSelectPlan }: { tier: PricingTier; isAnnual: boolean; period: "monthly" | "annual"; currencySymbol: string; onSelectPlan?: (id: string, period: "monthly" | "annual") => void }) {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   
