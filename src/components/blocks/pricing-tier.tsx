@@ -215,6 +215,125 @@ function PriceDisplay({ price, period, symbol }: { price: number; period: string
   );
 }
 
+// ─── Pricing Card (Interactive Sizzle) ───────────────────────────────────────
+function PricingCard({ tier, isAnnual, period, currencySymbol, onSelectPlan }: { tier: PricingTier; isAnnual: boolean; period: string; currencySymbol: string; onSelectPlan?: (id: string, period: string) => void }) {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
+
+  return (
+    <motion.div
+      variants={cardVariants}
+      whileHover={{ y: -8, transition: { duration: 0.3, ease: "easeOut" } }}
+      onMouseMove={handleMouseMove}
+      className={cn("group relative", tier.highlighted && "lg:-mt-4")}
+    >
+      {/* Spinning gradient border — only on highlighted */}
+      {tier.highlighted && <SpinningBorder />}
+
+      {/* Card surface */}
+      <div
+        className={cn(
+          "relative flex h-full flex-col overflow-hidden rounded-2xl border p-6 sm:p-8 transition-colors duration-300",
+          "bg-white dark:bg-zinc-900",
+          tier.highlighted
+            ? "border-transparent dark:bg-zinc-800/90 lg:pb-12"
+            : "border-zinc-200 shadow-sm dark:border-zinc-700 dark:hover:bg-zinc-800/60"
+        )}
+      >
+        {/* Interactive Mouse Spotlight */}
+        <motion.div
+          className="pointer-events-none absolute -inset-px opacity-0 transition duration-300 group-hover:opacity-100"
+          style={{
+            background: useMotionTemplate`
+              radial-gradient(
+                650px circle at ${mouseX}px ${mouseY}px,
+                ${tier.highlighted ? "rgba(139,92,246,0.15)" : "rgba(139,92,246,0.06)"},
+                transparent 80%
+              )
+            `,
+          }}
+        />
+
+        {/* Inner glow on highlighted */}
+        {tier.highlighted && (
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-b from-violet-500/10 via-transparent to-blue-500/5 dark:from-violet-400/10" />
+        )}
+
+        {/* Subtle glass noise texture */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[0.015] mix-blend-overlay dark:opacity-[0.03]" style={{ backgroundImage: "url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')" }} />
+
+        {/* Content */}
+        <div className="relative z-10">
+          {tier.badge && (
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+              <Badge className="gap-1.5 whitespace-nowrap bg-gradient-to-r from-violet-600 to-blue-500 px-3.5 py-1 text-xs font-semibold text-white shadow-lg shadow-violet-500/30 border-0">
+                <Star className="h-3 w-3 fill-current shrink-0" strokeWidth={0} /> {tier.badge}
+              </Badge>
+            </div>
+          )}
+
+          <div className="flex items-start gap-3.5">
+            <span
+              className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
+                tier.highlighted
+                  ? "bg-gradient-to-br from-violet-600 to-blue-500 text-white shadow-lg shadow-violet-500/30"
+                  : "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300"
+              )}
+              aria-hidden="true"
+            >
+              {tier.icon}
+            </span>
+            <div>
+              <h3 className="text-base font-bold tracking-tight text-zinc-900 dark:text-white">{tier.name}</h3>
+              <p className="mt-0.5 text-xs italic text-zinc-500 dark:text-zinc-400">{tier.tagline}</p>
+            </div>
+          </div>
+
+          <p className="mt-4 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">{tier.description}</p>
+
+          <PriceDisplay price={isAnnual ? tier.annualPrice : tier.monthlyPrice} period={period} symbol={currencySymbol} />
+
+          <div className="mt-6">
+            <div className="relative overflow-hidden rounded-xl">
+              <Button size="lg"
+                className={cn("relative w-full gap-2 font-semibold transition-all duration-300",
+                  tier.highlighted
+                    ? "bg-gradient-to-r from-violet-600 to-blue-500 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:opacity-95 border-0 group-hover:scale-[1.02]"
+                    : "dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700 group-hover:border-violet-500/30"
+                )}
+                variant={tier.highlighted ? "default" : "outline"}
+                onClick={() => onSelectPlan?.(tier.id, period)}
+                aria-label={`Select ${tier.name} plan`}
+              >
+                {tier.highlighted && <span aria-hidden="true" className="animate-shimmer pointer-events-none absolute inset-0 w-1/3 bg-white/20 blur-sm" />}
+                {tier.cta}
+                <ArrowRight className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
+              </Button>
+            </div>
+            {tier.ctaNote && (
+              <p className="mt-2.5 flex items-center justify-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+                <Lock className="h-3 w-3 shrink-0" strokeWidth={2} />{tier.ctaNote}
+              </p>
+            )}
+          </div>
+
+          <div className="my-7 h-px bg-zinc-200 dark:bg-zinc-700" role="separator" />
+
+          <ul className="flex flex-col gap-3.5" role="list" aria-label={`${tier.name} features`}>
+            {tier.features.map((f, i) => <FeatureRow key={i} feature={f} />)}
+          </ul>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 // ─── Main block ───────────────────────────────────────────────────────────────
 export function PricingTierBlock({
   tiers = DEFAULT_TIERS,
@@ -289,95 +408,10 @@ export function PricingTierBlock({
           </p>
         </motion.div>
 
-        {/* ── Cards ── */}
-        <motion.div variants={containerVariants} initial="hidden" animate="visible"
-          className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-3 lg:items-start">
           {resolved.map((tier) => (
-            <motion.div key={tier.id} variants={cardVariants}
-              whileHover={{ y: -6, transition: { duration: 0.2, ease: "easeOut" } }}
-              className={cn(
-                "group relative",
-                tier.highlighted && "lg:-mt-4"
-              )}>
-
-              {/* Spinning gradient border — only on highlighted */}
-              {tier.highlighted && <SpinningBorder />}
-
-              {/* Card surface */}
-              <div className={cn(
-                "relative flex flex-col rounded-2xl border p-6 sm:p-8 transition-all duration-200",
-                "bg-white dark:bg-zinc-900",
-                tier.highlighted
-                  ? "border-transparent dark:bg-zinc-800/90 lg:pb-12"
-                  : "border-zinc-200 shadow-sm hover:shadow-xl hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800/60"
-              )}>
-
-                {/* Inner glow on highlighted */}
-                {tier.highlighted && (
-                  <div aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-b from-violet-500/8 via-transparent to-blue-500/5 dark:from-violet-400/12" />
-                )}
-
-                {/* Badge */}
-                {tier.badge && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <Badge className="gap-1.5 whitespace-nowrap bg-gradient-to-r from-violet-600 to-blue-500 px-3.5 py-1 text-xs font-semibold text-white shadow-lg shadow-violet-500/30 border-0">
-                      <Star className="h-3 w-3 fill-current shrink-0" strokeWidth={0} /> {tier.badge}
-                    </Badge>
-                  </div>
-                )}
-
-                {/* Plan header */}
-                <div className="flex items-start gap-3.5">
-                  <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
-                    tier.highlighted
-                      ? "bg-gradient-to-br from-violet-600 to-blue-500 text-white shadow-lg shadow-violet-500/30"
-                      : "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300"
-                  )} aria-hidden="true">{tier.icon}</span>
-                  <div>
-                    <h3 className="text-base font-bold tracking-tight text-zinc-900 dark:text-white">{tier.name}</h3>
-                    <p className="mt-0.5 text-xs italic text-zinc-500 dark:text-zinc-400">{tier.tagline}</p>
-                  </div>
-                </div>
-
-                <p className="mt-4 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">{tier.description}</p>
-
-                <PriceDisplay price={isAnnual ? tier.annualPrice : tier.monthlyPrice} period={period} symbol={currencySymbol} />
-
-                {/* CTA */}
-                <div className="mt-6">
-                  <div className="relative overflow-hidden rounded-xl">
-                    <Button size="lg"
-                      className={cn("relative w-full gap-2 font-semibold",
-                        tier.highlighted
-                          ? "bg-gradient-to-r from-violet-600 to-blue-500 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:opacity-95 border-0"
-                          : "dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700"
-                      )}
-                      variant={tier.highlighted ? "default" : "outline"}
-                      onClick={() => onSelectPlan?.(tier.id, period)}
-                      aria-label={`Select ${tier.name} plan`}>
-                      {/* Shimmer on Pro CTA */}
-                      {tier.highlighted && (
-                        <span aria-hidden="true" className="animate-shimmer pointer-events-none absolute inset-0 w-1/3 bg-white/20 blur-sm" />
-                      )}
-                      {tier.cta}
-                      <ArrowRight className="h-4 w-4 shrink-0" />
-                    </Button>
-                  </div>
-                  {tier.ctaNote && (
-                    <p className="mt-2.5 flex items-center justify-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
-                      <Lock className="h-3 w-3 shrink-0" strokeWidth={2} />{tier.ctaNote}
-                    </p>
-                  )}
-                </div>
-
-                <div className="my-7 h-px bg-zinc-200 dark:bg-zinc-700" role="separator" />
-
-                <ul className="flex flex-col gap-3.5" role="list" aria-label={`${tier.name} features`}>
-                  {tier.features.map((f, i) => <FeatureRow key={i} feature={f} />)}
-                </ul>
-              </div>
-            </motion.div>
+            <PricingCard key={tier.id} tier={tier} isAnnual={isAnnual} period={period} currencySymbol={currencySymbol} onSelectPlan={onSelectPlan} />
           ))}
+
         </motion.div>
 
         {/* ── Trust footer ── */}
