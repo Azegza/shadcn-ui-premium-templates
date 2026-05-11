@@ -3,7 +3,22 @@
 import { useState } from "react";
 import type { BezierDefinition } from "framer-motion";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, Zap, Shield, Crown, ArrowRight, Sparkles } from "lucide-react";
+import {
+  Check,
+  X,
+  Zap,
+  ShieldCheck,
+  Crown,
+  ArrowRight,
+  Star,
+  TrendingUp,
+  Lock,
+  Users,
+  Headphones,
+  BarChart3,
+  Globe,
+  CircleDollarSign,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -19,11 +34,13 @@ export interface PricingFeature {
   text: string;
   included: boolean;
   highlight?: boolean;
+  icon?: React.ReactNode;
 }
 
 export interface PricingTier {
   id: string;
   name: string;
+  tagline: string;
   description: string;
   badge?: string;
   icon: React.ReactNode;
@@ -32,6 +49,7 @@ export interface PricingTier {
   stripePriceIds: StripePriceRef;
   features: PricingFeature[];
   cta: string;
+  ctaNote?: string;
   highlighted: boolean;
   variant: "outline" | "default" | "ghost";
 }
@@ -50,19 +68,22 @@ const DEFAULT_TIERS: PricingTier[] = [
   {
     id: "starter",
     name: "Starter",
-    description: "Perfect for side projects and indie hackers getting started.",
-    icon: <Zap className="h-5 w-5" />,
+    tagline: "Just getting started?",
+    description:
+      "Build your first product without paying a dime. No tricks, no expiring trials.",
+    icon: <Zap className="h-5 w-5 shrink-0" strokeWidth={1.5} />,
     monthlyPrice: 0,
     annualPrice: 0,
     stripePriceIds: { monthly: "price_free", annual: "price_free" },
     highlighted: false,
     variant: "outline",
-    cta: "Start for free",
+    cta: "Start building, it's free",
+    ctaNote: "No credit card. No gotchas.",
     features: [
-      { text: "3 Projects", included: true },
-      { text: "5 Team members", included: true },
-      { text: "2 GB Storage", included: true },
-      { text: "Community support", included: true },
+      { text: "3 Projects", included: true, icon: <TrendingUp className="h-3.5 w-3.5 shrink-0" /> },
+      { text: "5 Team members", included: true, icon: <Users className="h-3.5 w-3.5 shrink-0" /> },
+      { text: "2 GB Storage", included: true, icon: <BarChart3 className="h-3.5 w-3.5 shrink-0" /> },
+      { text: "Community support", included: true, icon: <Headphones className="h-3.5 w-3.5 shrink-0" /> },
       { text: "Advanced analytics", included: false },
       { text: "Custom domains", included: false },
       { text: "Priority support", included: false },
@@ -72,9 +93,11 @@ const DEFAULT_TIERS: PricingTier[] = [
   {
     id: "pro",
     name: "Pro",
-    description: "Everything a growing SaaS team needs to ship fast.",
+    tagline: "For teams that ship.",
+    description:
+      "All the tools you need to grow fast — without spending your weekends on infrastructure.",
     badge: "Most Popular",
-    icon: <Crown className="h-5 w-5" />,
+    icon: <Crown className="h-5 w-5 shrink-0" strokeWidth={1.5} />,
     monthlyPrice: 49,
     annualPrice: 39,
     stripePriceIds: {
@@ -83,14 +106,15 @@ const DEFAULT_TIERS: PricingTier[] = [
     },
     highlighted: true,
     variant: "default",
-    cta: "Start free trial",
+    cta: "Start your 14-day trial",
+    ctaNote: "Cancel anytime, no questions asked.",
     features: [
-      { text: "Unlimited Projects", included: true, highlight: true },
-      { text: "25 Team members", included: true },
-      { text: "50 GB Storage", included: true },
-      { text: "Priority email support", included: true },
-      { text: "Advanced analytics", included: true, highlight: true },
-      { text: "Custom domains", included: true },
+      { text: "Unlimited Projects", included: true, highlight: true, icon: <TrendingUp className="h-3.5 w-3.5 shrink-0" /> },
+      { text: "25 Team members", included: true, icon: <Users className="h-3.5 w-3.5 shrink-0" /> },
+      { text: "50 GB Storage", included: true, icon: <BarChart3 className="h-3.5 w-3.5 shrink-0" /> },
+      { text: "Priority email support", included: true, icon: <Headphones className="h-3.5 w-3.5 shrink-0" /> },
+      { text: "Advanced analytics", included: true, highlight: true, icon: <BarChart3 className="h-3.5 w-3.5 shrink-0" /> },
+      { text: "Custom domains", included: true, icon: <Globe className="h-3.5 w-3.5 shrink-0" /> },
       { text: "Priority support", included: false },
       { text: "SLA guarantee", included: false },
     ],
@@ -98,8 +122,10 @@ const DEFAULT_TIERS: PricingTier[] = [
   {
     id: "enterprise",
     name: "Enterprise",
-    description: "Dedicated infrastructure, compliance, and white-glove support.",
-    icon: <Shield className="h-5 w-5" />,
+    tagline: "Built for scale.",
+    description:
+      "Dedicated infrastructure, compliance tooling, and a team that actually picks up the phone.",
+    icon: <ShieldCheck className="h-5 w-5 shrink-0" strokeWidth={1.5} />,
     monthlyPrice: 149,
     annualPrice: 119,
     stripePriceIds: {
@@ -108,16 +134,17 @@ const DEFAULT_TIERS: PricingTier[] = [
     },
     highlighted: false,
     variant: "outline",
-    cta: "Talk to sales",
+    cta: "Talk to a human",
+    ctaNote: "We'll reply within 2 business hours.",
     features: [
-      { text: "Unlimited Projects", included: true },
-      { text: "Unlimited Team members", included: true, highlight: true },
-      { text: "500 GB Storage", included: true },
-      { text: "Dedicated Slack channel", included: true },
-      { text: "Advanced analytics + exports", included: true },
-      { text: "Custom domains + SSL", included: true },
-      { text: "24/7 priority support", included: true, highlight: true },
-      { text: "99.99% SLA guarantee", included: true, highlight: true },
+      { text: "Unlimited Projects", included: true, icon: <TrendingUp className="h-3.5 w-3.5 shrink-0" /> },
+      { text: "Unlimited Team members", included: true, highlight: true, icon: <Users className="h-3.5 w-3.5 shrink-0" /> },
+      { text: "500 GB Storage", included: true, icon: <BarChart3 className="h-3.5 w-3.5 shrink-0" /> },
+      { text: "Dedicated Slack channel", included: true, icon: <Headphones className="h-3.5 w-3.5 shrink-0" /> },
+      { text: "Analytics + full data export", included: true, icon: <BarChart3 className="h-3.5 w-3.5 shrink-0" /> },
+      { text: "Custom domains + SSL", included: true, icon: <Globe className="h-3.5 w-3.5 shrink-0" /> },
+      { text: "24/7 priority support", included: true, highlight: true, icon: <Headphones className="h-3.5 w-3.5 shrink-0" /> },
+      { text: "99.99% SLA guarantee", included: true, highlight: true, icon: <ShieldCheck className="h-3.5 w-3.5 shrink-0" /> },
     ],
   },
 ];
@@ -129,22 +156,41 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.1 },
+    transition: { staggerChildren: 0.12, delayChildren: 0.15 },
   },
 };
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: SPRING_EASE } },
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: SPRING_EASE } },
 };
 
 const priceVariants = {
-  enter: { opacity: 0, y: -12 },
-  center: { opacity: 1, y: 0, transition: { duration: 0.25, ease: "easeOut" as const } },
-  exit: { opacity: 0, y: 12, transition: { duration: 0.18 } },
+  enter: { opacity: 0, y: -14 },
+  center: { opacity: 1, y: 0, transition: { duration: 0.28, ease: "easeOut" as const } },
+  exit: { opacity: 0, y: 14, transition: { duration: 0.18 } },
 };
 
 // ─── Sub-Components ──────────────────────────────────────────────────────────
+function StarRating({ count = 5 }: { count?: number }) {
+  return (
+    <span className="inline-flex items-center gap-0.5" aria-label={`${count} out of 5 stars`}>
+      {Array.from({ length: count }).map((_, i) => (
+        <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" strokeWidth={0} />
+      ))}
+    </span>
+  );
+}
+
+function TrustRow({ note }: { note: string }) {
+  return (
+    <p className="mt-2.5 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+      <Lock className="h-3 w-3 shrink-0" strokeWidth={2} />
+      {note}
+    </p>
+  );
+}
+
 function PriceDisplay({
   price,
   period,
@@ -169,9 +215,9 @@ function PriceDisplay({
             <span className="text-5xl font-bold tracking-tight">Free</span>
           ) : (
             <>
-              <span className="text-2xl font-semibold text-muted-foreground mb-1.5">$</span>
+              <span className="text-2xl font-semibold text-muted-foreground mb-2">$</span>
               <span className="text-5xl font-bold tracking-tight">{price}</span>
-              <span className="text-muted-foreground mb-1.5 text-sm">
+              <span className="text-muted-foreground mb-1.5 text-sm leading-relaxed">
                 /{period === "monthly" ? "mo" : "mo, billed annually"}
               </span>
             </>
@@ -184,21 +230,28 @@ function PriceDisplay({
 
 function FeatureRow({ feature }: { feature: PricingFeature }) {
   return (
-    <li className="flex items-center gap-3 text-sm">
+    <li className="flex items-start gap-3 text-sm">
       <span
         className={cn(
-          "flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
+          "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
           feature.included
             ? "bg-primary/10 text-primary"
-            : "bg-muted text-muted-foreground/40"
+            : "bg-muted/60 text-muted-foreground/30"
         )}
+        aria-hidden="true"
       >
-        <Check className="h-3 w-3" strokeWidth={3} />
+        {feature.included
+          ? <Check className="h-3 w-3" strokeWidth={2.5} />
+          : <X className="h-3 w-3" strokeWidth={2} />
+        }
       </span>
       <span
         className={cn(
-          feature.included ? "text-foreground" : "text-muted-foreground line-through decoration-muted-foreground/30",
-          feature.highlight && feature.included && "font-medium text-primary"
+          "leading-relaxed",
+          feature.included
+            ? "text-foreground"
+            : "text-muted-foreground/50 line-through decoration-muted-foreground/20",
+          feature.highlight && feature.included && "font-semibold text-foreground"
         )}
       >
         {feature.text}
@@ -225,162 +278,185 @@ export function PricingTierBlock({
       className={cn("relative w-full px-4 py-24 sm:px-6 lg:px-8", className)}
       aria-label="Pricing plans"
     >
-      {/* Background glow */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 overflow-hidden"
-      >
-        <div className="absolute left-1/2 top-0 h-[600px] w-[800px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
+      {/* Background: soft radial glow + subtle dot grid for texture */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute left-1/2 top-0 h-[700px] w-[900px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
+        <div
+          className="absolute inset-0 opacity-[0.025]"
+          style={{
+            backgroundImage: "radial-gradient(circle, currentColor 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+          }}
+        />
       </div>
 
       <div className="relative mx-auto max-w-6xl">
-        {/* Header */}
+        {/* ── Header ──────────────────────────────────────────── */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.55, ease: SPRING_EASE }}
           className="text-center"
         >
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary mb-6">
-            <Sparkles className="h-3.5 w-3.5" />
-            Simple, transparent pricing
+          {/* Social proof pill */}
+          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background/80 px-4 py-1.5 text-sm text-muted-foreground mb-6 shadow-sm backdrop-blur-sm">
+            <StarRating />
+            <span className="font-semibold text-foreground">4.9</span>
+            from 1,200+ developers
           </div>
-          <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
+
+          <h2 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
             Pay for what you need,{" "}
             <span className="text-primary">nothing more</span>
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground max-w-xl mx-auto">
-            Start free, upgrade when your team grows. No hidden fees, no
-            surprises on your invoice.
+          <p className="mt-5 text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+            Honest pricing, no dark patterns. Start free and upgrade when it makes sense for
+            your team — not because a trial timer ran out.
           </p>
         </motion.div>
 
-        {/* Billing Toggle */}
+        {/* ── Billing Toggle ──────────────────────────────────── */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
-          className="mt-10 flex items-center justify-center gap-3"
+          transition={{ duration: 0.5, delay: 0.18 }}
+          className="mt-10 flex flex-col items-center gap-2"
         >
-          <span
-            className={cn(
-              "text-sm font-medium transition-colors",
-              !isAnnual ? "text-foreground" : "text-muted-foreground"
-            )}
-          >
-            Monthly
-          </span>
-          <Switch
-            id="billing-toggle"
-            checked={isAnnual}
-            onCheckedChange={setIsAnnual}
-            aria-label="Toggle annual billing"
-          />
-          <span
-            className={cn(
-              "text-sm font-medium transition-colors",
-              isAnnual ? "text-foreground" : "text-muted-foreground"
-            )}
-          >
-            Annual
-          </span>
-          <AnimatePresence>
-            {isAnnual && (
-              <motion.span
-                initial={{ opacity: 0, scale: 0.8, x: -8 }}
-                animate={{ opacity: 1, scale: 1, x: 0 }}
-                exit={{ opacity: 0, scale: 0.8, x: -8 }}
-                className="rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
-              >
-                Save up to 20%
-              </motion.span>
-            )}
-          </AnimatePresence>
+          <div className="flex items-center gap-3">
+            <span
+              className={cn(
+                "text-sm font-semibold transition-colors",
+                !isAnnual ? "text-foreground" : "text-muted-foreground"
+              )}
+            >
+              Monthly
+            </span>
+            <Switch
+              id="billing-toggle"
+              checked={isAnnual}
+              onCheckedChange={setIsAnnual}
+              aria-label="Toggle annual billing"
+            />
+            <span
+              className={cn(
+                "text-sm font-semibold transition-colors",
+                isAnnual ? "text-foreground" : "text-muted-foreground"
+              )}
+            >
+              Annual
+            </span>
+            <AnimatePresence>
+              {isAnnual && (
+                <motion.span
+                  initial={{ opacity: 0, scale: 0.8, x: -8 }}
+                  animate={{ opacity: 1, scale: 1, x: 0 }}
+                  exit={{ opacity: 0, scale: 0.8, x: -8 }}
+                  className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                >
+                  <CircleDollarSign className="h-3 w-3 shrink-0" strokeWidth={2} />
+                  Save up to 20%
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {isAnnual ? "Billed once per year. Switch back anytime." : "Switch to annual and save two months free."}
+          </p>
         </motion.div>
 
-        {/* Tier Cards */}
+        {/* ── Tier Cards ──────────────────────────────────────── */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3"
+          className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3 md:items-start"
         >
           {tiers.map((tier) => (
             <motion.div
               key={tier.id}
               variants={cardVariants}
-              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              whileHover={{
+                y: -5,
+                transition: { duration: 0.22, ease: "easeOut" },
+              }}
               className={cn(
-                "relative flex flex-col rounded-2xl border bg-card p-8 shadow-sm transition-shadow hover:shadow-lg",
+                "relative flex flex-col rounded-2xl border bg-card p-8 shadow-sm",
+                "transition-all duration-200 hover:shadow-xl hover:bg-zinc-50 dark:hover:bg-zinc-900/60",
                 tier.highlighted &&
-                  "border-primary/50 shadow-primary/10 shadow-lg ring-1 ring-primary/20"
+                  "border-primary/40 shadow-lg shadow-primary/10 ring-1 ring-primary/20 md:-mt-4 md:pb-12"
               )}
             >
-              {/* Highlighted glow */}
+              {/* Highlighted gradient overlay */}
               {tier.highlighted && (
                 <div
                   aria-hidden="true"
-                  className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-b from-primary/5 to-transparent"
+                  className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-b from-primary/5 via-transparent to-transparent"
                 />
               )}
 
-              {/* Popular Badge */}
+              {/* "Most Popular" badge — floats above card */}
               {tier.badge && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                  <Badge className="gap-1 px-3 py-1 text-xs font-semibold shadow-md">
-                    <Sparkles className="h-3 w-3" />
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                  <Badge className="gap-1.5 px-3.5 py-1 text-xs font-semibold shadow-lg">
+                    <Star className="h-3 w-3 fill-current shrink-0" strokeWidth={0} />
                     {tier.badge}
                   </Badge>
                 </div>
               )}
 
-              {/* Plan header */}
-              <div className="flex items-center gap-3">
+              {/* Plan icon + name + tagline */}
+              <div className="flex items-start gap-3.5">
                 <span
                   className={cn(
-                    "flex h-10 w-10 items-center justify-center rounded-xl",
+                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
                     tier.highlighted
-                      ? "bg-primary text-primary-foreground"
+                      ? "bg-primary text-primary-foreground shadow-sm shadow-primary/30"
                       : "bg-muted text-muted-foreground"
                   )}
+                  aria-hidden="true"
                 >
                   {tier.icon}
                 </span>
                 <div>
-                  <h3 className="text-base font-semibold">{tier.name}</h3>
+                  <h3 className="text-base font-bold tracking-tight">{tier.name}</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5 italic">{tier.tagline}</p>
                 </div>
               </div>
 
-              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+              {/* Description */}
+              <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
                 {tier.description}
               </p>
 
-              {/* Price */}
+              {/* Price display */}
               <PriceDisplay
                 price={isAnnual ? tier.annualPrice : tier.monthlyPrice}
                 period={period}
               />
 
-              {/* CTA */}
-              <Button
-                size="lg"
-                variant={tier.highlighted ? "default" : "outline"}
-                className={cn(
-                  "mt-6 w-full gap-2 font-semibold transition-all",
-                  tier.highlighted && "shadow-md hover:shadow-primary/25"
-                )}
-                onClick={() => handleSelectPlan(tier.id)}
-                aria-label={`Select ${tier.name} plan`}
-              >
-                {tier.cta}
-                <ArrowRight className="h-4 w-4" />
-              </Button>
+              {/* CTA button + human trust note */}
+              <div className="mt-6">
+                <Button
+                  size="lg"
+                  variant={tier.highlighted ? "default" : "outline"}
+                  className={cn(
+                    "w-full gap-2 font-semibold transition-all",
+                    tier.highlighted && "shadow-md hover:shadow-lg hover:shadow-primary/20"
+                  )}
+                  onClick={() => handleSelectPlan(tier.id)}
+                  aria-label={`Select ${tier.name} plan`}
+                >
+                  {tier.cta}
+                  <ArrowRight className="h-4 w-4 shrink-0" />
+                </Button>
+                {tier.ctaNote && <TrustRow note={tier.ctaNote} />}
+              </div>
 
               {/* Divider */}
-              <div className="my-8 h-px bg-border" />
+              <div className="my-7 h-px bg-border/70" role="separator" />
 
-              {/* Features */}
-              <ul className="flex flex-col gap-3.5" role="list">
+              {/* Feature list */}
+              <ul className="flex flex-col gap-3.5" role="list" aria-label={`${tier.name} features`}>
                 {tier.features.map((feature, i) => (
                   <FeatureRow key={i} feature={feature} />
                 ))}
@@ -389,15 +465,25 @@ export function PricingTierBlock({
           ))}
         </motion.div>
 
-        {/* Trust line */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="mt-10 text-center text-sm text-muted-foreground"
+        {/* ── Footer trust row ───────────────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.65, duration: 0.4 }}
+          className="mt-14 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-muted-foreground"
         >
-          No credit card required · Cancel anytime · 14-day free trial on all paid plans
-        </motion.p>
+          {[
+            { icon: <Lock className="h-4 w-4 shrink-0" />, label: "SOC 2 compliant" },
+            { icon: <ShieldCheck className="h-4 w-4 shrink-0" />, label: "99.9% uptime SLA" },
+            { icon: <Headphones className="h-4 w-4 shrink-0" />, label: "Real humans on support" },
+            { icon: <CircleDollarSign className="h-4 w-4 shrink-0" />, label: "30-day money-back guarantee" },
+          ].map(({ icon, label }) => (
+            <span key={label} className="flex items-center gap-1.5">
+              {icon}
+              {label}
+            </span>
+          ))}
+        </motion.div>
       </div>
     </section>
   );
