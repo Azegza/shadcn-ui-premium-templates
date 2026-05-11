@@ -98,22 +98,31 @@ const containerVariants = {
   visible: { opacity: 1, transition: { staggerChildren: 0.13, delayChildren: 0.1 } },
 };
 
-// ─── Count-up hook ─────────────────────────────────────────────────────────
-function useCountUp(target: number) {
-  const [display, setDisplay] = useState(target);
-  const prev = useRef(target);
+// ─── Price Display (Optimized for performance) ────────────────────────────────
+function PriceDisplay({ price, period, symbol }: { price: number; period: string; symbol: string }) {
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (latest) => Math.round(latest));
+  
   useEffect(() => {
-    const from = prev.current;
-    prev.current = target;
-    if (from === target) return;
-    const ctrl = animate(from, target, {
+    const ctrl = animate(count, price, {
       duration: 0.8,
-      ease: [0.16, 1, 0.3, 1], // Ultra-smooth 2026 spring easing
-      onUpdate: (v) => setDisplay(Math.round(v)),
+      ease: [0.16, 1, 0.3, 1],
     });
     return () => ctrl.stop();
-  }, [target]);
-  return display;
+  }, [price, count]);
+
+  return (
+    <div className="mt-6 mb-1 flex items-end gap-1 h-[64px]">
+      {price === 0
+        ? <span className="text-5xl font-bold tracking-tight text-zinc-900 dark:text-white">Free</span>
+        : <>
+            <span className="mb-2 text-2xl font-semibold text-zinc-400">{symbol}</span>
+            <motion.span className="text-5xl font-bold tracking-tight text-zinc-900 dark:text-white">{rounded}</motion.span>
+            <span className="mb-1.5 text-sm text-zinc-500 dark:text-zinc-400">/{period === "annual" ? "mo, billed annually" : "mo"}</span>
+          </>
+      }
+    </div>
+  );
 }
 
 // ─── Spinning gradient border (the $49 differentiator) ──────────────────────
@@ -177,7 +186,7 @@ export function PricingTierSkeleton() {
 // ─── Sub-components ───────────────────────────────────────────────────────────
 function StarRating() {
   return (
-    <span className="inline-flex gap-0.5" aria-label="4.9 out of 5 stars">
+    <span className="inline-flex gap-0.5" role="img" aria-label="4.9 out of 5 stars">
       {[0,1,2,3,4].map((i) => <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" strokeWidth={0} />)}
     </span>
   );
@@ -199,21 +208,7 @@ function FeatureRow({ feature }: { feature: PricingFeature }) {
   );
 }
 
-function PriceDisplay({ price, period, symbol }: { price: number; period: string; symbol: string }) {
-  const count = useCountUp(price);
-  return (
-    <div className="mt-6 mb-1 flex items-end gap-1 h-[64px]">
-      {price === 0
-        ? <span className="text-5xl font-bold tracking-tight text-zinc-900 dark:text-white">Free</span>
-        : <>
-            <span className="mb-2 text-2xl font-semibold text-zinc-400">{symbol}</span>
-            <span className="text-5xl font-bold tracking-tight text-zinc-900 dark:text-white">{count}</span>
-            <span className="mb-1.5 text-sm text-zinc-500 dark:text-zinc-400">/{period === "annual" ? "mo, billed annually" : "mo"}</span>
-          </>
-      }
-    </div>
-  );
-}
+
 
 // ─── Pricing Card (Interactive Sizzle) ───────────────────────────────────────
 function PricingCard({ tier, isAnnual, period, currencySymbol, onSelectPlan }: { tier: PricingTier; isAnnual: boolean; period: string; currencySymbol: string; onSelectPlan?: (id: string, period: string) => void }) {
