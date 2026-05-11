@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import type { BezierDefinition } from "framer-motion";
-import { motion, AnimatePresence, animate } from "framer-motion";
+import { motion, AnimatePresence, animate, useMotionValue, useMotionTemplate, useTransform, useSpring } from "framer-motion";
 import { Check, X, Zap, ShieldCheck, Crown, ArrowRight, Star, Lock, Headphones, CircleDollarSign } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -107,8 +107,8 @@ function useCountUp(target: number) {
     prev.current = target;
     if (from === target) return;
     const ctrl = animate(from, target, {
-      duration: 0.5,
-      ease: SPRING,
+      duration: 0.8,
+      ease: [0.16, 1, 0.3, 1], // Ultra-smooth 2026 spring easing
       onUpdate: (v) => setDisplay(Math.round(v)),
     });
     return () => ctrl.stop();
@@ -219,20 +219,43 @@ function PriceDisplay({ price, period, symbol }: { price: number; period: string
 function PricingCard({ tier, isAnnual, period, currencySymbol, onSelectPlan }: { tier: PricingTier; isAnnual: boolean; period: string; currencySymbol: string; onSelectPlan?: (id: string, period: string) => void }) {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+  
+  // 3D Magnetic Tilt Effect (2026 standard)
+  const tiltX = useMotionValue(0);
+  const tiltY = useMotionValue(0);
+  const springConfig = { damping: 20, stiffness: 150, mass: 0.5 };
+  const smoothTiltX = useSpring(tiltX, springConfig);
+  const smoothTiltY = useSpring(tiltY, springConfig);
+  const rotateX = useTransform(smoothTiltY, [-0.5, 0.5], [8, -8]);
+  const rotateY = useTransform(smoothTiltX, [-0.5, 0.5], [-8, 8]);
 
   function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
-    const { left, top } = currentTarget.getBoundingClientRect();
+    const { left, top, width, height } = currentTarget.getBoundingClientRect();
+    
+    // Spotlight coordinates
     mouseX.set(clientX - left);
     mouseY.set(clientY - top);
+    
+    // Tilt coordinates (-0.5 to 0.5)
+    tiltX.set((clientX - left) / width - 0.5);
+    tiltY.set((clientY - top) / height - 0.5);
+  }
+
+  function handleMouseLeave() {
+    tiltX.set(0);
+    tiltY.set(0);
   }
 
   return (
     <motion.div
       variants={cardVariants}
-      whileHover={{ y: -8, transition: { duration: 0.3, ease: "easeOut" } }}
+      style={{ rotateX, rotateY, transformPerspective: 1200 }}
       onMouseMove={handleMouseMove}
-      className={cn("group relative", tier.highlighted && "lg:-mt-4")}
+      onMouseLeave={handleMouseLeave}
+      className={cn("group relative z-10", tier.highlighted && "lg:-mt-4")}
     >
+      {/* 3D Depth Shadow on Hover */}
+      <div aria-hidden="true" className="absolute inset-0 -z-10 rounded-2xl bg-violet-500/0 blur-xl transition-colors duration-500 group-hover:bg-violet-500/15" />
       {/* Spinning gradient border — only on highlighted */}
       {tier.highlighted && <SpinningBorder />}
 
@@ -373,15 +396,26 @@ export function PricingTierBlock({
             <span className="text-sm text-zinc-500 dark:text-zinc-300">from 1,200+ developers</span>
           </div>
 
-          <h2 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-5xl lg:text-6xl">
-            Pay for what you need,{" "}
+          <h2 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-5xl lg:text-6xl overflow-hidden pb-2">
+            <motion.span
+              initial={{ y: "100%", opacity: 0, filter: "blur(10px)" }}
+              animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+              className="inline-block"
+            >
+              Pay for what you need,
+            </motion.span>
+            <br />
             {/* ── Animated gradient text ── */}
-            <span
-              className="animate-gradient-flow bg-clip-text text-transparent"
+            <motion.span
+              initial={{ y: "100%", opacity: 0, filter: "blur(10px)" }}
+              animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+              className="inline-block animate-gradient-flow bg-clip-text text-transparent"
               style={{ backgroundImage: "linear-gradient(90deg, #7c3aed, #3b82f6, #8b5cf6, #06b6d4, #7c3aed)" }}
             >
               nothing more
-            </span>
+            </motion.span>
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-zinc-600 dark:text-zinc-300">
             Honest pricing, no dark patterns. Start free and upgrade when it makes sense for your team — not because a trial timer ran out.
