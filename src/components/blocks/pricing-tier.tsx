@@ -53,25 +53,18 @@ export interface PricingTier {
   variant: "outline" | "default" | "ghost";
 }
 
-// ─── Expanded Props API (Fix 4) ───────────────────────────────────────────
+// ─── Expanded Props API ───────────────────────────────────────────────────────
 export interface PricingTierBlockProps {
-  /** Override the default tiers */
   tiers?: PricingTier[];
-  /** Start with annual billing selected */
   showAnnualByDefault?: boolean;
-  /** Override which tier is highlighted — must match a tier `id` */
   highlightedTierId?: string;
-  /** Currency symbol shown before prices. Defaults to "$" */
   currencySymbol?: string;
-  /** Show the skeleton loader while this is true (e.g. while fetching plan data) */
   showSkeletonWhile?: boolean;
-  /** Callback on CTA click — receives tier id and billing period */
   onSelectPlan?: (tierId: string, period: "monthly" | "annual") => void;
-  /** Custom class for the section wrapper */
   className?: string;
 }
 
-// ─── Default Tier Data ───────────────────────────────────────────────────────
+// ─── Default Tier Data ────────────────────────────────────────────────────────
 const DEFAULT_TIERS: PricingTier[] = [
   {
     id: "starter",
@@ -108,10 +101,7 @@ const DEFAULT_TIERS: PricingTier[] = [
     icon: <Crown className="h-5 w-5 shrink-0" strokeWidth={1.5} />,
     monthlyPrice: 49,
     annualPrice: 39,
-    stripePriceIds: {
-      monthly: "price_pro_monthly",
-      annual: "price_pro_annual",
-    },
+    stripePriceIds: { monthly: "price_pro_monthly", annual: "price_pro_annual" },
     highlighted: true,
     variant: "default",
     cta: "Start your 14-day trial",
@@ -136,10 +126,7 @@ const DEFAULT_TIERS: PricingTier[] = [
     icon: <ShieldCheck className="h-5 w-5 shrink-0" strokeWidth={1.5} />,
     monthlyPrice: 149,
     annualPrice: 119,
-    stripePriceIds: {
-      monthly: "price_enterprise_monthly",
-      annual: "price_enterprise_annual",
-    },
+    stripePriceIds: { monthly: "price_enterprise_monthly", annual: "price_enterprise_annual" },
     highlighted: false,
     variant: "outline",
     cta: "Talk to a human",
@@ -157,15 +144,12 @@ const DEFAULT_TIERS: PricingTier[] = [
   },
 ];
 
-// ─── Animation Variants ──────────────────────────────────────────────────────
+// ─── Animation Variants ───────────────────────────────────────────────────────
 const SPRING_EASE: BezierDefinition = [0.22, 1, 0.36, 1];
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.12, delayChildren: 0.15 },
-  },
+  visible: { opacity: 1, transition: { staggerChildren: 0.12, delayChildren: 0.15 } },
 };
 
 const cardVariants = {
@@ -179,14 +163,11 @@ const priceVariants = {
   exit: { opacity: 0, y: 14, transition: { duration: 0.18 } },
 };
 
-// ─── Fix 3: Skeleton Loader ──────────────────────────────────────────────────
+// ─── Skeleton (Fix 3) ─────────────────────────────────────────────────────────
 function SkeletonBox({ className }: { className?: string }) {
   return (
     <div
-      className={cn(
-        "animate-pulse rounded-lg bg-muted/60 dark:bg-muted/40",
-        className
-      )}
+      className={cn("animate-pulse rounded-lg bg-zinc-200 dark:bg-zinc-700", className)}
       aria-hidden="true"
     />
   );
@@ -200,7 +181,6 @@ export function PricingTierSkeleton() {
       aria-busy="true"
     >
       <div className="mx-auto max-w-6xl">
-        {/* Header skeleton */}
         <div className="flex flex-col items-center gap-4">
           <SkeletonBox className="h-7 w-48 rounded-full" />
           <SkeletonBox className="h-12 w-3/4 max-w-xl" />
@@ -209,15 +189,13 @@ export function PricingTierSkeleton() {
           <SkeletonBox className="h-5 w-1/2 max-w-md" />
           <SkeletonBox className="h-8 w-44 rounded-full mt-2" />
         </div>
-
-        {/* Card skeletons */}
-        <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-3">
           {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
               className={cn(
-                "flex flex-col rounded-2xl border bg-card p-8",
-                i === 1 && "md:-mt-4"
+                "flex flex-col rounded-2xl border border-zinc-200 bg-white p-8 dark:border-zinc-700 dark:bg-zinc-900",
+                i === 1 && "lg:-mt-4"
               )}
             >
               <div className="flex items-start gap-3.5">
@@ -232,7 +210,7 @@ export function PricingTierSkeleton() {
               <SkeletonBox className="h-14 w-40 mt-6" />
               <SkeletonBox className="h-11 w-full mt-6 rounded-xl" />
               <SkeletonBox className="h-3 w-36 mx-auto mt-2" />
-              <div className="my-7 h-px bg-border/50" />
+              <div className="my-7 h-px bg-zinc-200 dark:bg-zinc-700" />
               <div className="flex flex-col gap-3.5">
                 {Array.from({ length: 8 }).map((_, j) => (
                   <div key={j} className="flex items-center gap-3">
@@ -249,19 +227,12 @@ export function PricingTierSkeleton() {
   );
 }
 
-// ─── Sub-Components ──────────────────────────────────────────────────────────
+// ─── Sub-components ───────────────────────────────────────────────────────────
 function StarRating({ count = 5 }: { count?: number }) {
   return (
-    <span
-      className="inline-flex items-center gap-0.5"
-      aria-label={`${count} out of 5 stars`}
-    >
+    <span className="inline-flex items-center gap-0.5" aria-label={`${count} out of 5 stars`}>
       {Array.from({ length: count }).map((_, i) => (
-        <Star
-          key={i}
-          className="h-3.5 w-3.5 fill-amber-400 text-amber-400"
-          strokeWidth={0}
-        />
+        <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" strokeWidth={0} />
       ))}
     </span>
   );
@@ -269,7 +240,7 @@ function StarRating({ count = 5 }: { count?: number }) {
 
 function TrustRow({ note }: { note: string }) {
   return (
-    <p className="mt-2.5 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+    <p className="mt-2.5 flex items-center justify-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
       <Lock className="h-3 w-3 shrink-0" strokeWidth={2} />
       {note}
     </p>
@@ -299,14 +270,20 @@ function PriceDisplay({
           className="flex items-end gap-1"
         >
           {isFree ? (
-            <span className="text-5xl font-bold tracking-tight">Free</span>
+            // HIGH CONTRAST: explicit white in dark, near-black in light
+            <span className="text-5xl font-bold tracking-tight text-zinc-900 dark:text-white">
+              Free
+            </span>
           ) : (
             <>
-              <span className="text-2xl font-semibold text-muted-foreground mb-2">
+              <span className="text-2xl font-semibold mb-2 text-zinc-400 dark:text-zinc-400">
                 {currencySymbol}
               </span>
-              <span className="text-5xl font-bold tracking-tight">{price}</span>
-              <span className="text-muted-foreground mb-1.5 text-sm leading-relaxed">
+              {/* HIGH CONTRAST: price number must be bright white in dark mode */}
+              <span className="text-5xl font-bold tracking-tight text-zinc-900 dark:text-white">
+                {price}
+              </span>
+              <span className="text-zinc-500 dark:text-zinc-400 mb-1.5 text-sm leading-relaxed">
                 /{period === "monthly" ? "mo" : "mo, billed annually"}
               </span>
             </>
@@ -324,8 +301,9 @@ function FeatureRow({ feature }: { feature: PricingFeature }) {
         className={cn(
           "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full transition-colors",
           feature.included
-            ? "bg-primary/10 text-primary dark:bg-primary/20"
-            : "bg-muted/60 text-muted-foreground/30 dark:bg-muted/30"
+            // HIGH CONTRAST: use stronger background in dark so icons pop
+            ? "bg-primary/10 text-primary dark:bg-primary/25 dark:text-primary"
+            : "bg-zinc-100 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-600"
         )}
         aria-hidden="true"
       >
@@ -339,9 +317,12 @@ function FeatureRow({ feature }: { feature: PricingFeature }) {
         className={cn(
           "leading-relaxed",
           feature.included
-            ? "text-foreground"
-            : "text-muted-foreground/50 line-through decoration-muted-foreground/20",
-          feature.highlight && feature.included && "font-semibold text-foreground"
+            // HIGH CONTRAST: included features must be clearly readable
+            ? "text-zinc-700 dark:text-zinc-200"
+            // HIGH CONTRAST: excluded features struck-through but still visible
+            : "text-zinc-400 dark:text-zinc-500 line-through decoration-zinc-300 dark:decoration-zinc-600",
+          // Highlighted features get maximum contrast bold
+          feature.highlight && feature.included && "font-semibold text-zinc-900 dark:text-white"
         )}
       >
         {feature.text}
@@ -350,7 +331,7 @@ function FeatureRow({ feature }: { feature: PricingFeature }) {
   );
 }
 
-// ─── Main Block ──────────────────────────────────────────────────────────────
+// ─── Main Block ───────────────────────────────────────────────────────────────
 export function PricingTierBlock({
   tiers = DEFAULT_TIERS,
   showAnnualByDefault = false,
@@ -363,12 +344,10 @@ export function PricingTierBlock({
   const [isAnnual, setIsAnnual] = useState(showAnnualByDefault);
   const period = isAnnual ? "annual" : "monthly";
 
-  // Fix 4: apply external highlightedTierId override at render time
   const resolvedTiers = highlightedTierId
     ? tiers.map((t) => ({ ...t, highlighted: t.id === highlightedTierId }))
     : tiers;
 
-  // Fix 3: show skeleton while loading
   if (showSkeletonWhile) return <PricingTierSkeleton />;
 
   const handleSelectPlan = (tierId: string) => {
@@ -380,48 +359,46 @@ export function PricingTierBlock({
       className={cn("relative w-full px-4 py-24 sm:px-6 lg:px-8", className)}
       aria-label="Pricing plans"
     >
-      {/* Background: soft radial glow + subtle dot-grid texture (Fix 1: dark-mode friendly colors) */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 overflow-hidden"
-      >
-        <div className="absolute left-1/2 top-0 h-[700px] w-[900px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl dark:bg-primary/10" />
+      {/* Background: glow + dot grid — boosted opacity for dark mode visibility */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute left-1/2 top-0 h-[700px] w-[900px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl dark:bg-primary/15" />
         <div
-          className="absolute inset-0 opacity-[0.025] dark:opacity-[0.04]"
+          className="absolute inset-0 opacity-[0.03] dark:opacity-[0.06]"
           style={{
-            backgroundImage:
-              "radial-gradient(circle, currentColor 1px, transparent 1px)",
+            backgroundImage: "radial-gradient(circle, currentColor 1px, transparent 1px)",
             backgroundSize: "24px 24px",
           }}
         />
       </div>
 
       <div className="relative mx-auto max-w-6xl">
-        {/* ── Header ──────────────────────────────────────────── */}
+        {/* ── Header ── */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, ease: SPRING_EASE }}
           className="text-center"
         >
-          {/* Social proof pill — Fix 1: uses semantic border tokens that respect dark mode */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background/80 px-4 py-1.5 text-sm text-muted-foreground mb-6 shadow-sm backdrop-blur-sm dark:bg-background/60 dark:border-border/60">
+          {/* Social proof pill — HIGH CONTRAST explicit dark tokens */}
+          <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white/80 px-4 py-1.5 text-sm mb-6 shadow-sm backdrop-blur-sm dark:border-zinc-700 dark:bg-zinc-800/80">
             <StarRating />
-            <span className="font-semibold text-foreground">4.9</span>
-            from 1,200+ developers
+            <span className="font-semibold text-zinc-900 dark:text-white">4.9</span>
+            <span className="text-zinc-500 dark:text-zinc-300">from 1,200+ developers</span>
           </div>
 
-          <h2 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+          {/* HIGH CONTRAST heading: explicit dark:text-white */}
+          <h2 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-5xl lg:text-6xl">
             Pay for what you need,{" "}
             <span className="text-primary">nothing more</span>
           </h2>
-          <p className="mt-5 text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+          {/* HIGH CONTRAST body: dark:text-zinc-300 (not muted-foreground) */}
+          <p className="mt-5 text-lg leading-relaxed text-zinc-600 dark:text-zinc-300 max-w-2xl mx-auto">
             Honest pricing, no dark patterns. Start free and upgrade when it
             makes sense for your team — not because a trial timer ran out.
           </p>
         </motion.div>
 
-        {/* ── Billing Toggle ──────────────────────────────────── */}
+        {/* ── Billing Toggle ── */}
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
@@ -432,7 +409,9 @@ export function PricingTierBlock({
             <span
               className={cn(
                 "text-sm font-semibold transition-colors",
-                !isAnnual ? "text-foreground" : "text-muted-foreground"
+                !isAnnual
+                  ? "text-zinc-900 dark:text-white"
+                  : "text-zinc-500 dark:text-zinc-400"
               )}
             >
               Monthly
@@ -446,7 +425,9 @@ export function PricingTierBlock({
             <span
               className={cn(
                 "text-sm font-semibold transition-colors",
-                isAnnual ? "text-foreground" : "text-muted-foreground"
+                isAnnual
+                  ? "text-zinc-900 dark:text-white"
+                  : "text-zinc-500 dark:text-zinc-400"
               )}
             >
               Annual
@@ -457,7 +438,7 @@ export function PricingTierBlock({
                   initial={{ opacity: 0, scale: 0.8, x: -8 }}
                   animate={{ opacity: 1, scale: 1, x: 0 }}
                   exit={{ opacity: 0, scale: 0.8, x: -8 }}
-                  className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 dark:border-emerald-500/30"
+                  className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-500/25 dark:border-emerald-500/40"
                 >
                   <CircleDollarSign className="h-3 w-3 shrink-0" strokeWidth={2} />
                   Save up to 20%
@@ -465,40 +446,39 @@ export function PricingTierBlock({
               )}
             </AnimatePresence>
           </div>
-          <p className="text-xs text-muted-foreground">
+          {/* HIGH CONTRAST toggle hint */}
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
             {isAnnual
               ? "Billed once per year. Switch back anytime."
               : "Switch to annual and save two months free."}
           </p>
         </motion.div>
 
-        {/* ── Tier Cards — Fix 2: mobile-first responsive grid ── */}
+        {/* ── Tier Cards ── */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-1 lg:grid-cols-3 lg:items-start"
+          className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-3 lg:items-start"
         >
           {resolvedTiers.map((tier) => (
             <motion.div
               key={tier.id}
               variants={cardVariants}
-              whileHover={{
-                y: -5,
-                transition: { duration: 0.22, ease: "easeOut" },
-              }}
+              whileHover={{ y: -5, transition: { duration: 0.22, ease: "easeOut" } }}
               className={cn(
-                // Fix 1: dark mode card surface — uses card token which maps to dark bg automatically
-                "relative flex flex-col rounded-2xl border bg-card p-6 sm:p-8 shadow-sm",
-                // Fix 1: warm hover states work in both light and dark
+                // HIGH CONTRAST card surfaces: explicit dark:bg-zinc-900 + dark:border-zinc-700
+                "relative flex flex-col rounded-2xl border bg-white p-6 shadow-sm sm:p-8",
+                "border-zinc-200 dark:bg-zinc-900 dark:border-zinc-700",
+                // Warm hover — works in both modes
                 "transition-all duration-200 hover:shadow-xl",
-                "hover:bg-zinc-50 dark:hover:bg-zinc-900/60",
+                "hover:bg-zinc-50 dark:hover:bg-zinc-800/80",
                 tier.highlighted &&
-                  // Fix 1: ring + border use primary token — correct in dark mode
-                  "border-primary/40 shadow-lg shadow-primary/10 ring-1 ring-primary/20 dark:shadow-primary/5 lg:-mt-4 lg:pb-12"
+                  // HIGH CONTRAST highlighted card: distinct zinc-800 bg in dark
+                  "border-primary/40 shadow-lg shadow-primary/10 dark:bg-zinc-800/80 dark:border-primary/50 dark:shadow-primary/10 lg:-mt-4 lg:pb-12"
               )}
             >
-              {/* Fix 1: highlighted gradient — subtle in both light + dark */}
+              {/* Highlighted gradient overlay */}
               {tier.highlighted && (
                 <div
                   aria-hidden="true"
@@ -510,10 +490,7 @@ export function PricingTierBlock({
               {tier.badge && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                   <Badge className="gap-1.5 px-3.5 py-1 text-xs font-semibold shadow-lg whitespace-nowrap">
-                    <Star
-                      className="h-3 w-3 fill-current shrink-0"
-                      strokeWidth={0}
-                    />
+                    <Star className="h-3 w-3 fill-current shrink-0" strokeWidth={0} />
                     {tier.badge}
                   </Badge>
                 </div>
@@ -526,43 +503,46 @@ export function PricingTierBlock({
                     "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
                     tier.highlighted
                       ? "bg-primary text-primary-foreground shadow-sm shadow-primary/30"
-                      : "bg-muted text-muted-foreground dark:bg-muted/60"
+                      : "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300"
                   )}
                   aria-hidden="true"
                 >
                   {tier.icon}
                 </span>
                 <div>
-                  <h3 className="text-base font-bold tracking-tight">
+                  {/* HIGH CONTRAST plan name */}
+                  <h3 className="text-base font-bold tracking-tight text-zinc-900 dark:text-white">
                     {tier.name}
                   </h3>
-                  <p className="text-xs text-muted-foreground mt-0.5 italic">
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 italic">
                     {tier.tagline}
                   </p>
                 </div>
               </div>
 
-              {/* Description */}
-              <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
+              {/* HIGH CONTRAST description: dark:text-zinc-300 not muted-foreground */}
+              <p className="mt-4 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
                 {tier.description}
               </p>
 
-              {/* Price display */}
+              {/* Price */}
               <PriceDisplay
                 price={isAnnual ? tier.annualPrice : tier.monthlyPrice}
                 period={period}
                 currencySymbol={currencySymbol}
               />
 
-              {/* CTA + trust note */}
+              {/* CTA */}
               <div className="mt-6">
                 <Button
                   size="lg"
                   variant={tier.highlighted ? "default" : "outline"}
                   className={cn(
                     "w-full gap-2 font-semibold transition-all",
-                    tier.highlighted &&
-                      "shadow-md hover:shadow-lg hover:shadow-primary/20"
+                    !tier.highlighted &&
+                      // HIGH CONTRAST outline button in dark: explicit text color
+                      "dark:text-white dark:border-zinc-600 dark:hover:bg-zinc-700",
+                    tier.highlighted && "shadow-md hover:shadow-lg hover:shadow-primary/20"
                   )}
                   onClick={() => handleSelectPlan(tier.id)}
                   aria-label={`Select ${tier.name} plan`}
@@ -574,9 +554,12 @@ export function PricingTierBlock({
               </div>
 
               {/* Divider */}
-              <div className="my-7 h-px bg-border/70 dark:bg-border/40" role="separator" />
+              <div
+                className="my-7 h-px bg-zinc-200 dark:bg-zinc-700"
+                role="separator"
+              />
 
-              {/* Feature list */}
+              {/* Features */}
               <ul
                 className="flex flex-col gap-3.5"
                 role="list"
@@ -590,12 +573,13 @@ export function PricingTierBlock({
           ))}
         </motion.div>
 
-        {/* ── Footer trust signals ────────────────────────────── */}
+        {/* ── Footer trust signals ── */}
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.65, duration: 0.4 }}
-          className="mt-14 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-muted-foreground"
+          // HIGH CONTRAST footer: dark:text-zinc-400 (not muted-foreground which can be invisible)
+          className="mt-14 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-zinc-500 dark:text-zinc-400"
         >
           {[
             { icon: <Lock className="h-4 w-4 shrink-0" />, label: "SOC 2 compliant" },
