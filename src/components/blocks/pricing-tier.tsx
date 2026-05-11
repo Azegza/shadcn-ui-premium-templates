@@ -121,23 +121,23 @@ function SpinningBorder() {
   return (
     <>
       {/* Sharp border container — clips the large spinning element to the card's shape */}
-      <div className="pointer-events-none absolute -inset-[1.5px] rounded-[17px] overflow-hidden" aria-hidden="true">
+      <div className="pointer-events-none absolute -inset-[1px] rounded-[17px] overflow-hidden" aria-hidden="true">
         <div
           className="animate-border-spin absolute left-1/2 top-1/2 aspect-square w-[250%] -translate-x-1/2 -translate-y-1/2"
           style={{
             background:
-              "conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(139,92,246,0.95) 50deg, rgba(59,130,246,0.85) 90deg, transparent 130deg)",
+              "conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(139,92,246,1) 15deg, rgba(59,130,246,1) 30deg, transparent 40deg)",
           }}
         />
       </div>
       
       {/* Glow halo — spins freely, blurred, creates a searchlight effect */}
-      <div className="pointer-events-none absolute -inset-[4px] rounded-[20px] opacity-40 blur-lg" aria-hidden="true">
+      <div className="pointer-events-none absolute -inset-[1.5px] rounded-[20px] opacity-40 blur-md" aria-hidden="true">
         <div
           className="animate-border-spin absolute left-1/2 top-1/2 aspect-square w-[250%] -translate-x-1/2 -translate-y-1/2"
           style={{
             background:
-              "conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(139,92,246,0.9) 50deg, rgba(59,130,246,0.8) 90deg, transparent 130deg)",
+              "conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(139,92,246,0.8) 15deg, rgba(59,130,246,0.8) 30deg, transparent 40deg)",
           }}
         />
       </div>
@@ -265,7 +265,7 @@ function PricingCard({ tier, isAnnual, period, currencySymbol, onSelectPlan }: {
           "relative flex h-full flex-col overflow-hidden rounded-2xl border p-6 sm:p-8 transition-colors duration-300",
           "bg-white dark:bg-zinc-900",
           tier.highlighted
-            ? "border-transparent dark:bg-zinc-800/90 lg:pb-12"
+            ? "border-transparent dark:bg-zinc-900 lg:pb-12"
             : "border-zinc-200 shadow-sm dark:border-zinc-700 dark:hover:bg-zinc-800/60"
         )}
       >
