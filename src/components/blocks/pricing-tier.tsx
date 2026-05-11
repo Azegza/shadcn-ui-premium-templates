@@ -449,9 +449,6 @@ export function PricingTierBlock({
             <PricingCard key={tier.id} tier={tier} isAnnual={isAnnual} period={period} currencySymbol={currencySymbol} onSelectPlan={onSelectPlan} />
           ))}
         </motion.div>
-
-        </div>
-
         {/* ── Trust footer ── */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
           className="mt-14 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-zinc-500 dark:text-zinc-400">
