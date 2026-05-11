@@ -442,11 +442,15 @@ export function PricingTierBlock({
           </p>
         </motion.div>
 
+        {/* ── Cards ── */}
+        <motion.div variants={containerVariants} initial="hidden" animate="visible"
+          className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-3 lg:items-start">
           {resolved.map((tier) => (
             <PricingCard key={tier.id} tier={tier} isAnnual={isAnnual} period={period} currencySymbol={currencySymbol} onSelectPlan={onSelectPlan} />
           ))}
-
         </motion.div>
+
+        </div>
 
         {/* ── Trust footer ── */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
