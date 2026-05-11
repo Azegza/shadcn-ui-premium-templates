@@ -1,0 +1,77 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "shadcn-blocks-premium",
+  "homepage": "https://github.com/YOUR_USERNAME/shadcn-blocks-premium-templates",
+  "items": [
+    {
+      "name": "pricing-tier",
+      "type": "registry:block",
+      "title": "SaaS Pricing Tier",
+      "description": "A premium, animated pricing section with Monthly/Annual toggle, highlighted Pro tier, feature comparison, and Stripe-ready TypeScript types.",
+      "dependencies": [
+        "framer-motion",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "card",
+        "badge",
+        "switch"
+      ],
+      "files": [
+        {
+          "path": "src/components/blocks/pricing-tier.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "onboarding-flow",
+      "type": "registry:block",
+      "title": "Multi-Step Onboarding Flow",
+      "description": "A secure, multi-step onboarding wizard with progress indicators, animated transitions, and full Zod validation.",
+      "dependencies": [
+        "framer-motion",
+        "zod",
+        "react-hook-form",
+        "@hookform/resolvers",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "card",
+        "input",
+        "label",
+        "select"
+      ],
+      "files": [
+        {
+          "path": "src/components/blocks/onboarding-flow.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "metrics-dashboard",
+      "type": "registry:block",
+      "title": "Metrics Dashboard Layout",
+      "description": "A responsive SaaS metrics dashboard with sidebar navigation, data cards, and integrated Recharts visualizations.",
+      "dependencies": [
+        "recharts",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "card",
+        "avatar",
+        "badge"
+      ],
+      "files": [
+        {
+          "path": "src/components/blocks/metrics-dashboard.tsx",
+          "type": "registry:component"
+        }
+      ]
+    }
+  ]
+}
