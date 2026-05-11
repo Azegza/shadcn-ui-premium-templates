@@ -128,29 +128,15 @@ function PriceDisplay({ price, period, symbol }: { price: number; period: string
 // ─── Spinning gradient border (the $49 differentiator) ──────────────────────
 function SpinningBorder() {
   return (
-    <>
-      {/* Sharp border container — clips the large spinning element to the card's shape */}
-      <div className="pointer-events-none absolute -inset-[1px] rounded-[17px] overflow-hidden" aria-hidden="true">
-        <div
-          className="animate-border-spin absolute left-1/2 top-1/2 aspect-square w-[250%] -translate-x-1/2 -translate-y-1/2"
-          style={{
-            background:
-              "conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(139,92,246,1) 15deg, rgba(59,130,246,1) 30deg, transparent 40deg)",
-          }}
-        />
-      </div>
-      
-      {/* Glow halo — spins freely, blurred, creates a searchlight effect */}
-      <div className="pointer-events-none absolute -inset-[1.5px] rounded-[20px] opacity-40 blur-md" aria-hidden="true">
-        <div
-          className="animate-border-spin absolute left-1/2 top-1/2 aspect-square w-[250%] -translate-x-1/2 -translate-y-1/2"
-          style={{
-            background:
-              "conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(139,92,246,0.8) 15deg, rgba(59,130,246,0.8) 30deg, transparent 40deg)",
-          }}
-        />
-      </div>
-    </>
+    <div className="pointer-events-none absolute -inset-[1px] rounded-[17px] overflow-hidden" aria-hidden="true">
+      <div
+        className="animate-border-spin absolute left-1/2 top-1/2 aspect-square w-[250%] -translate-x-1/2 -translate-y-1/2"
+        style={{
+          background:
+            "conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(139,92,246,1) 15deg, rgba(59,130,246,1) 30deg, transparent 40deg)",
+        }}
+      />
+    </div>
   );
 }
 
