@@ -11,7 +11,6 @@ import {
   Crown,
   ArrowRight,
   Star,
-  TrendingUp,
   Lock,
   Users,
   Headphones,
@@ -54,9 +53,18 @@ export interface PricingTier {
   variant: "outline" | "default" | "ghost";
 }
 
+// ─── Expanded Props API (Fix 4) ───────────────────────────────────────────
 export interface PricingTierBlockProps {
   /** Override the default tiers */
   tiers?: PricingTier[];
+  /** Start with annual billing selected */
+  showAnnualByDefault?: boolean;
+  /** Override which tier is highlighted — must match a tier `id` */
+  highlightedTierId?: string;
+  /** Currency symbol shown before prices. Defaults to "$" */
+  currencySymbol?: string;
+  /** Show the skeleton loader while this is true (e.g. while fetching plan data) */
+  showSkeletonWhile?: boolean;
   /** Callback on CTA click — receives tier id and billing period */
   onSelectPlan?: (tierId: string, period: "monthly" | "annual") => void;
   /** Custom class for the section wrapper */
@@ -80,7 +88,7 @@ const DEFAULT_TIERS: PricingTier[] = [
     cta: "Start building, it's free",
     ctaNote: "No credit card. No gotchas.",
     features: [
-      { text: "3 Projects", included: true, icon: <TrendingUp className="h-3.5 w-3.5 shrink-0" /> },
+      { text: "3 Projects", included: true, icon: <BarChart3 className="h-3.5 w-3.5 shrink-0" /> },
       { text: "5 Team members", included: true, icon: <Users className="h-3.5 w-3.5 shrink-0" /> },
       { text: "2 GB Storage", included: true, icon: <BarChart3 className="h-3.5 w-3.5 shrink-0" /> },
       { text: "Community support", included: true, icon: <Headphones className="h-3.5 w-3.5 shrink-0" /> },
@@ -109,7 +117,7 @@ const DEFAULT_TIERS: PricingTier[] = [
     cta: "Start your 14-day trial",
     ctaNote: "Cancel anytime, no questions asked.",
     features: [
-      { text: "Unlimited Projects", included: true, highlight: true, icon: <TrendingUp className="h-3.5 w-3.5 shrink-0" /> },
+      { text: "Unlimited Projects", included: true, highlight: true, icon: <BarChart3 className="h-3.5 w-3.5 shrink-0" /> },
       { text: "25 Team members", included: true, icon: <Users className="h-3.5 w-3.5 shrink-0" /> },
       { text: "50 GB Storage", included: true, icon: <BarChart3 className="h-3.5 w-3.5 shrink-0" /> },
       { text: "Priority email support", included: true, icon: <Headphones className="h-3.5 w-3.5 shrink-0" /> },
@@ -137,7 +145,7 @@ const DEFAULT_TIERS: PricingTier[] = [
     cta: "Talk to a human",
     ctaNote: "We'll reply within 2 business hours.",
     features: [
-      { text: "Unlimited Projects", included: true, icon: <TrendingUp className="h-3.5 w-3.5 shrink-0" /> },
+      { text: "Unlimited Projects", included: true, icon: <BarChart3 className="h-3.5 w-3.5 shrink-0" /> },
       { text: "Unlimited Team members", included: true, highlight: true, icon: <Users className="h-3.5 w-3.5 shrink-0" /> },
       { text: "500 GB Storage", included: true, icon: <BarChart3 className="h-3.5 w-3.5 shrink-0" /> },
       { text: "Dedicated Slack channel", included: true, icon: <Headphones className="h-3.5 w-3.5 shrink-0" /> },
@@ -171,12 +179,89 @@ const priceVariants = {
   exit: { opacity: 0, y: 14, transition: { duration: 0.18 } },
 };
 
+// ─── Fix 3: Skeleton Loader ──────────────────────────────────────────────────
+function SkeletonBox({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn(
+        "animate-pulse rounded-lg bg-muted/60 dark:bg-muted/40",
+        className
+      )}
+      aria-hidden="true"
+    />
+  );
+}
+
+export function PricingTierSkeleton() {
+  return (
+    <section
+      className="relative w-full px-4 py-24 sm:px-6 lg:px-8"
+      aria-label="Loading pricing plans"
+      aria-busy="true"
+    >
+      <div className="mx-auto max-w-6xl">
+        {/* Header skeleton */}
+        <div className="flex flex-col items-center gap-4">
+          <SkeletonBox className="h-7 w-48 rounded-full" />
+          <SkeletonBox className="h-12 w-3/4 max-w-xl" />
+          <SkeletonBox className="h-12 w-1/2 max-w-sm" />
+          <SkeletonBox className="h-5 w-2/3 max-w-lg" />
+          <SkeletonBox className="h-5 w-1/2 max-w-md" />
+          <SkeletonBox className="h-8 w-44 rounded-full mt-2" />
+        </div>
+
+        {/* Card skeletons */}
+        <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div
+              key={i}
+              className={cn(
+                "flex flex-col rounded-2xl border bg-card p-8",
+                i === 1 && "md:-mt-4"
+              )}
+            >
+              <div className="flex items-start gap-3.5">
+                <SkeletonBox className="h-10 w-10 rounded-xl shrink-0" />
+                <div className="flex flex-col gap-2 flex-1">
+                  <SkeletonBox className="h-4 w-24" />
+                  <SkeletonBox className="h-3 w-32" />
+                </div>
+              </div>
+              <SkeletonBox className="h-4 w-full mt-4" />
+              <SkeletonBox className="h-4 w-4/5 mt-2" />
+              <SkeletonBox className="h-14 w-40 mt-6" />
+              <SkeletonBox className="h-11 w-full mt-6 rounded-xl" />
+              <SkeletonBox className="h-3 w-36 mx-auto mt-2" />
+              <div className="my-7 h-px bg-border/50" />
+              <div className="flex flex-col gap-3.5">
+                {Array.from({ length: 8 }).map((_, j) => (
+                  <div key={j} className="flex items-center gap-3">
+                    <SkeletonBox className="h-5 w-5 rounded-full shrink-0" />
+                    <SkeletonBox className={cn("h-3", j % 3 === 0 ? "w-3/4" : "w-1/2")} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ─── Sub-Components ──────────────────────────────────────────────────────────
 function StarRating({ count = 5 }: { count?: number }) {
   return (
-    <span className="inline-flex items-center gap-0.5" aria-label={`${count} out of 5 stars`}>
+    <span
+      className="inline-flex items-center gap-0.5"
+      aria-label={`${count} out of 5 stars`}
+    >
       {Array.from({ length: count }).map((_, i) => (
-        <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" strokeWidth={0} />
+        <Star
+          key={i}
+          className="h-3.5 w-3.5 fill-amber-400 text-amber-400"
+          strokeWidth={0}
+        />
       ))}
     </span>
   );
@@ -194,9 +279,11 @@ function TrustRow({ note }: { note: string }) {
 function PriceDisplay({
   price,
   period,
+  currencySymbol,
 }: {
   price: number;
   period: "monthly" | "annual";
+  currencySymbol: string;
 }) {
   const isFree = price === 0;
 
@@ -215,7 +302,9 @@ function PriceDisplay({
             <span className="text-5xl font-bold tracking-tight">Free</span>
           ) : (
             <>
-              <span className="text-2xl font-semibold text-muted-foreground mb-2">$</span>
+              <span className="text-2xl font-semibold text-muted-foreground mb-2">
+                {currencySymbol}
+              </span>
               <span className="text-5xl font-bold tracking-tight">{price}</span>
               <span className="text-muted-foreground mb-1.5 text-sm leading-relaxed">
                 /{period === "monthly" ? "mo" : "mo, billed annually"}
@@ -233,17 +322,18 @@ function FeatureRow({ feature }: { feature: PricingFeature }) {
     <li className="flex items-start gap-3 text-sm">
       <span
         className={cn(
-          "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
+          "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full transition-colors",
           feature.included
-            ? "bg-primary/10 text-primary"
-            : "bg-muted/60 text-muted-foreground/30"
+            ? "bg-primary/10 text-primary dark:bg-primary/20"
+            : "bg-muted/60 text-muted-foreground/30 dark:bg-muted/30"
         )}
         aria-hidden="true"
       >
-        {feature.included
-          ? <Check className="h-3 w-3" strokeWidth={2.5} />
-          : <X className="h-3 w-3" strokeWidth={2} />
-        }
+        {feature.included ? (
+          <Check className="h-3 w-3" strokeWidth={2.5} />
+        ) : (
+          <X className="h-3 w-3" strokeWidth={2} />
+        )}
       </span>
       <span
         className={cn(
@@ -263,11 +353,23 @@ function FeatureRow({ feature }: { feature: PricingFeature }) {
 // ─── Main Block ──────────────────────────────────────────────────────────────
 export function PricingTierBlock({
   tiers = DEFAULT_TIERS,
+  showAnnualByDefault = false,
+  highlightedTierId,
+  currencySymbol = "$",
+  showSkeletonWhile = false,
   onSelectPlan,
   className,
 }: PricingTierBlockProps) {
-  const [isAnnual, setIsAnnual] = useState(false);
+  const [isAnnual, setIsAnnual] = useState(showAnnualByDefault);
   const period = isAnnual ? "annual" : "monthly";
+
+  // Fix 4: apply external highlightedTierId override at render time
+  const resolvedTiers = highlightedTierId
+    ? tiers.map((t) => ({ ...t, highlighted: t.id === highlightedTierId }))
+    : tiers;
+
+  // Fix 3: show skeleton while loading
+  if (showSkeletonWhile) return <PricingTierSkeleton />;
 
   const handleSelectPlan = (tierId: string) => {
     onSelectPlan?.(tierId, period);
@@ -278,13 +380,17 @@ export function PricingTierBlock({
       className={cn("relative w-full px-4 py-24 sm:px-6 lg:px-8", className)}
       aria-label="Pricing plans"
     >
-      {/* Background: soft radial glow + subtle dot grid for texture */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute left-1/2 top-0 h-[700px] w-[900px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
+      {/* Background: soft radial glow + subtle dot-grid texture (Fix 1: dark-mode friendly colors) */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+      >
+        <div className="absolute left-1/2 top-0 h-[700px] w-[900px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl dark:bg-primary/10" />
         <div
-          className="absolute inset-0 opacity-[0.025]"
+          className="absolute inset-0 opacity-[0.025] dark:opacity-[0.04]"
           style={{
-            backgroundImage: "radial-gradient(circle, currentColor 1px, transparent 1px)",
+            backgroundImage:
+              "radial-gradient(circle, currentColor 1px, transparent 1px)",
             backgroundSize: "24px 24px",
           }}
         />
@@ -298,8 +404,8 @@ export function PricingTierBlock({
           transition={{ duration: 0.55, ease: SPRING_EASE }}
           className="text-center"
         >
-          {/* Social proof pill */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background/80 px-4 py-1.5 text-sm text-muted-foreground mb-6 shadow-sm backdrop-blur-sm">
+          {/* Social proof pill — Fix 1: uses semantic border tokens that respect dark mode */}
+          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background/80 px-4 py-1.5 text-sm text-muted-foreground mb-6 shadow-sm backdrop-blur-sm dark:bg-background/60 dark:border-border/60">
             <StarRating />
             <span className="font-semibold text-foreground">4.9</span>
             from 1,200+ developers
@@ -310,8 +416,8 @@ export function PricingTierBlock({
             <span className="text-primary">nothing more</span>
           </h2>
           <p className="mt-5 text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            Honest pricing, no dark patterns. Start free and upgrade when it makes sense for
-            your team — not because a trial timer ran out.
+            Honest pricing, no dark patterns. Start free and upgrade when it
+            makes sense for your team — not because a trial timer ran out.
           </p>
         </motion.div>
 
@@ -351,7 +457,7 @@ export function PricingTierBlock({
                   initial={{ opacity: 0, scale: 0.8, x: -8 }}
                   animate={{ opacity: 1, scale: 1, x: 0 }}
                   exit={{ opacity: 0, scale: 0.8, x: -8 }}
-                  className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                  className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 dark:border-emerald-500/30"
                 >
                   <CircleDollarSign className="h-3 w-3 shrink-0" strokeWidth={2} />
                   Save up to 20%
@@ -360,18 +466,20 @@ export function PricingTierBlock({
             </AnimatePresence>
           </div>
           <p className="text-xs text-muted-foreground">
-            {isAnnual ? "Billed once per year. Switch back anytime." : "Switch to annual and save two months free."}
+            {isAnnual
+              ? "Billed once per year. Switch back anytime."
+              : "Switch to annual and save two months free."}
           </p>
         </motion.div>
 
-        {/* ── Tier Cards ──────────────────────────────────────── */}
+        {/* ── Tier Cards — Fix 2: mobile-first responsive grid ── */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3 md:items-start"
+          className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-1 lg:grid-cols-3 lg:items-start"
         >
-          {tiers.map((tier) => (
+          {resolvedTiers.map((tier) => (
             <motion.div
               key={tier.id}
               variants={cardVariants}
@@ -380,25 +488,32 @@ export function PricingTierBlock({
                 transition: { duration: 0.22, ease: "easeOut" },
               }}
               className={cn(
-                "relative flex flex-col rounded-2xl border bg-card p-8 shadow-sm",
-                "transition-all duration-200 hover:shadow-xl hover:bg-zinc-50 dark:hover:bg-zinc-900/60",
+                // Fix 1: dark mode card surface — uses card token which maps to dark bg automatically
+                "relative flex flex-col rounded-2xl border bg-card p-6 sm:p-8 shadow-sm",
+                // Fix 1: warm hover states work in both light and dark
+                "transition-all duration-200 hover:shadow-xl",
+                "hover:bg-zinc-50 dark:hover:bg-zinc-900/60",
                 tier.highlighted &&
-                  "border-primary/40 shadow-lg shadow-primary/10 ring-1 ring-primary/20 md:-mt-4 md:pb-12"
+                  // Fix 1: ring + border use primary token — correct in dark mode
+                  "border-primary/40 shadow-lg shadow-primary/10 ring-1 ring-primary/20 dark:shadow-primary/5 lg:-mt-4 lg:pb-12"
               )}
             >
-              {/* Highlighted gradient overlay */}
+              {/* Fix 1: highlighted gradient — subtle in both light + dark */}
               {tier.highlighted && (
                 <div
                   aria-hidden="true"
-                  className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-b from-primary/5 via-transparent to-transparent"
+                  className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-b from-primary/5 via-transparent to-transparent dark:from-primary/10"
                 />
               )}
 
-              {/* "Most Popular" badge — floats above card */}
+              {/* "Most Popular" badge */}
               {tier.badge && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <Badge className="gap-1.5 px-3.5 py-1 text-xs font-semibold shadow-lg">
-                    <Star className="h-3 w-3 fill-current shrink-0" strokeWidth={0} />
+                  <Badge className="gap-1.5 px-3.5 py-1 text-xs font-semibold shadow-lg whitespace-nowrap">
+                    <Star
+                      className="h-3 w-3 fill-current shrink-0"
+                      strokeWidth={0}
+                    />
                     {tier.badge}
                   </Badge>
                 </div>
@@ -411,15 +526,19 @@ export function PricingTierBlock({
                     "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
                     tier.highlighted
                       ? "bg-primary text-primary-foreground shadow-sm shadow-primary/30"
-                      : "bg-muted text-muted-foreground"
+                      : "bg-muted text-muted-foreground dark:bg-muted/60"
                   )}
                   aria-hidden="true"
                 >
                   {tier.icon}
                 </span>
                 <div>
-                  <h3 className="text-base font-bold tracking-tight">{tier.name}</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5 italic">{tier.tagline}</p>
+                  <h3 className="text-base font-bold tracking-tight">
+                    {tier.name}
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-0.5 italic">
+                    {tier.tagline}
+                  </p>
                 </div>
               </div>
 
@@ -432,16 +551,18 @@ export function PricingTierBlock({
               <PriceDisplay
                 price={isAnnual ? tier.annualPrice : tier.monthlyPrice}
                 period={period}
+                currencySymbol={currencySymbol}
               />
 
-              {/* CTA button + human trust note */}
+              {/* CTA + trust note */}
               <div className="mt-6">
                 <Button
                   size="lg"
                   variant={tier.highlighted ? "default" : "outline"}
                   className={cn(
                     "w-full gap-2 font-semibold transition-all",
-                    tier.highlighted && "shadow-md hover:shadow-lg hover:shadow-primary/20"
+                    tier.highlighted &&
+                      "shadow-md hover:shadow-lg hover:shadow-primary/20"
                   )}
                   onClick={() => handleSelectPlan(tier.id)}
                   aria-label={`Select ${tier.name} plan`}
@@ -453,10 +574,14 @@ export function PricingTierBlock({
               </div>
 
               {/* Divider */}
-              <div className="my-7 h-px bg-border/70" role="separator" />
+              <div className="my-7 h-px bg-border/70 dark:bg-border/40" role="separator" />
 
               {/* Feature list */}
-              <ul className="flex flex-col gap-3.5" role="list" aria-label={`${tier.name} features`}>
+              <ul
+                className="flex flex-col gap-3.5"
+                role="list"
+                aria-label={`${tier.name} features`}
+              >
                 {tier.features.map((feature, i) => (
                   <FeatureRow key={i} feature={feature} />
                 ))}
@@ -465,7 +590,7 @@ export function PricingTierBlock({
           ))}
         </motion.div>
 
-        {/* ── Footer trust row ───────────────────────────────── */}
+        {/* ── Footer trust signals ────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
