@@ -1,4 +1,10 @@
+import { Metadata } from "next";
 import { OnboardingFlowBlock } from "@/components/blocks/onboarding-flow";
+
+export const metadata: Metadata = {
+  title: "Onboarding Flow",
+  description: "A secure, multi-step onboarding wizard with progress indicators.",
+};
 
 export default function OnboardingPreviewPage() {
   return (

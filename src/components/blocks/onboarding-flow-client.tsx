@@ -4,8 +4,8 @@ import { useState } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { ArrowRight, ArrowLeft, Check, Sparkles, Building2, Users } from "lucide-react";
+import { onboardingSchema, type OnboardingFormValues } from "@/lib/validations/onboarding";
+import { ArrowRight, ArrowLeft, Check, User, Buildings as Building2, Users } from "@phosphor-icons/react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,19 +19,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-
-const onboardingSchema = z.object({
-  fullName: z.string().min(2, "Name must be at least 2 characters."),
-  role: z.string().min(1, "Please select a role."),
-  workspaceName: z.string().min(2, "Workspace name is required."),
-  workspaceSlug: z.string().min(2, "Workspace URL is required."),
-  invites: z.string().optional(),
-});
-
-type OnboardingFormValues = z.infer<typeof onboardingSchema>;
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 const STEPS = [
-  { id: "profile", title: "Your Profile", icon: Sparkles },
+  { id: "profile", title: "Your Profile", icon: User },
   { id: "workspace", title: "Workspace", icon: Building2 },
   { id: "invite", title: "Team", icon: Users },
 ];
@@ -95,9 +86,14 @@ export function OnboardingClient() {
   return (
     <div className="relative w-full rounded-2xl border border-zinc-200 bg-white/60 p-6 shadow-xl shadow-zinc-200/50 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/50 dark:shadow-zinc-900/50 sm:p-10">
       
+      {/* ── Theme Toggle ── */}
+      <div className="absolute top-4 right-4 z-50 sm:top-6 sm:right-6">
+        <ThemeToggle />
+      </div>
+      
       {/* ── Progress Indicator ── */}
       {!isSuccess && (
-        <div className="mb-10 relative">
+        <div className="mb-10 relative mx-auto max-w-sm sm:max-w-md">
           <div className="absolute top-1/2 start-0 h-0.5 w-full -translate-y-1/2 bg-zinc-100 dark:bg-zinc-800" />
           <div 
             className="absolute top-1/2 start-0 h-0.5 -translate-y-1/2 bg-violet-600 transition-all duration-500 ease-out dark:bg-violet-500" 
@@ -121,11 +117,11 @@ export function OnboardingClient() {
                           : "border-zinc-200 bg-white text-zinc-400 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-500"
                     )}
                   >
-                    {isCompleted ? <Check className="h-5 w-5" strokeWidth={3} /> : <Icon className="h-5 w-5" />}
+                    {isCompleted ? <Check className="h-5 w-5" weight="bold" aria-hidden="true" /> : <Icon className="h-5 w-5" aria-hidden="true" />}
                   </div>
                   <span className={cn(
                     "hidden text-xs font-semibold sm:block transition-colors",
-                    isActive ? "text-zinc-900 dark:text-white" : "text-zinc-400 dark:text-zinc-500"
+                    isActive ? "text-zinc-900 dark:text-white" : "text-zinc-500 dark:text-zinc-400"
                   )}>
                     {step.title}
                   </span>
@@ -150,7 +146,7 @@ export function OnboardingClient() {
                   className="flex min-h-[350px] flex-col items-center justify-center text-center space-y-6"
                 >
                   <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-400">
-                    <Check className="h-10 w-10" strokeWidth={3} />
+                    <Check className="h-10 w-10" weight="bold" />
                   </div>
                   <div className="space-y-2">
                     <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">All set!</h2>
@@ -174,8 +170,8 @@ export function OnboardingClient() {
                   className="w-full space-y-6"
                 >
                   <div className="space-y-1.5">
-                    <h2 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">Welcome aboard!</h2>
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400">Let's start by getting to know you.</p>
+                    <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">Welcome aboard!</h1>
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400">Let&apos;s start by getting to know you.</p>
                   </div>
                   
                   <FormField
@@ -242,7 +238,7 @@ export function OnboardingClient() {
                 >
                   <div className="space-y-1.5">
                     <h2 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">Create Workspace</h2>
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400">This is where your team will collaborate.</p>
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400">This is where your team will collaborate.</p>
                   </div>
                   
                   <FormField
@@ -315,7 +311,7 @@ export function OnboardingClient() {
                 >
                   <div className="space-y-1.5">
                     <h2 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">Invite your team</h2>
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400">Get your team on board right away. You can also do this later.</p>
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400">Get your team on board right away. You can also do this later.</p>
                   </div>
                   
                   <FormField

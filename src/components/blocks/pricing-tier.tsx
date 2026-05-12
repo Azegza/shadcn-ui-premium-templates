@@ -3,11 +3,12 @@
 import { useState, useEffect } from "react";
 import type { BezierDefinition } from "framer-motion";
 import { motion, AnimatePresence, animate, useMotionValue, useMotionTemplate, useTransform, useSpring } from "framer-motion";
-import { Check, X, Zap, ShieldCheck, Crown, ArrowRight, Star, Lock, Headphones, CircleDollarSign } from "lucide-react";
+import { Check, X, PaperPlaneTilt as Zap, Buildings, ShieldCheck, RocketLaunch as Crown, ArrowRight, Star, LockKey as Lock, Headphones, CurrencyCircleDollar as CircleDollarSign } from "@phosphor-icons/react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 export interface StripePriceRef { monthly: string; annual: string; }
@@ -33,7 +34,7 @@ export const DEFAULT_TIERS: PricingTier[] = [
   {
     id: "starter", name: "Starter", tagline: "Just getting started?",
     description: "Build your first product without paying a dime. No tricks, no expiring trials.",
-    icon: <Zap className="h-5 w-5 shrink-0" strokeWidth={1.5} />,
+    icon: <Zap className="h-5 w-5 shrink-0" weight="regular" />,
     monthlyPrice: 0, annualPrice: 0,
     stripePriceIds: { monthly: "price_free", annual: "price_free" },
     highlighted: false, cta: "Start building, it's free", ctaNote: "No credit card. No gotchas.",
@@ -52,7 +53,7 @@ export const DEFAULT_TIERS: PricingTier[] = [
     id: "pro", name: "Pro", tagline: "For teams that ship.",
     description: "All the tools to grow fast — without spending weekends on infrastructure.",
     badge: "Most Popular",
-    icon: <Crown className="h-5 w-5 shrink-0" strokeWidth={1.5} />,
+    icon: <Crown className="h-5 w-5 shrink-0" weight="regular" />,
     monthlyPrice: 49, annualPrice: 39,
     stripePriceIds: { monthly: "price_pro_monthly", annual: "price_pro_annual" },
     highlighted: true, cta: "Start your 14-day trial", ctaNote: "Cancel anytime, no questions asked.",
@@ -70,10 +71,10 @@ export const DEFAULT_TIERS: PricingTier[] = [
   {
     id: "enterprise", name: "Enterprise", tagline: "Built for scale.",
     description: "Dedicated infrastructure, compliance, and a team that picks up the phone.",
-    icon: <ShieldCheck className="h-5 w-5 shrink-0" strokeWidth={1.5} />,
+    icon: <Buildings className="h-5 w-5 shrink-0" weight="regular" />,
     monthlyPrice: 149, annualPrice: 119,
     stripePriceIds: { monthly: "price_enterprise_monthly", annual: "price_enterprise_annual" },
-    highlighted: false, cta: "Talk to a human", ctaNote: "We'll reply within 2 business hours.",
+    highlighted: false, cta: "Talk to us", ctaNote: "We'll reply within 2 business hours.",
     features: [
       { text: "Unlimited Projects", included: true },
       { text: "Unlimited Team members", included: true, highlight: true },
@@ -173,7 +174,7 @@ export function PricingTierSkeleton() {
 function StarRating() {
   return (
     <span className="inline-flex gap-0.5" role="img" aria-label="4.9 out of 5 stars">
-      {[0,1,2,3,4].map((i) => <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" strokeWidth={0} />)}
+      {[0,1,2,3,4].map((i) => <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" weight="fill" />)}
     </span>
   );
 }
@@ -184,7 +185,7 @@ function FeatureRow({ feature }: { feature: PricingFeature }) {
       <span className={cn("mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
         feature.included ? "bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-300" : "bg-zinc-100 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-600"
       )} aria-hidden="true">
-        {feature.included ? <Check className="h-3 w-3" strokeWidth={2.5} /> : <X className="h-3 w-3" strokeWidth={2} />}
+        {feature.included ? <Check className="h-3 w-3" weight="bold" /> : <X className="h-3 w-3" weight="bold" />}
       </span>
       <span className={cn("leading-relaxed",
         feature.included ? "text-zinc-700 dark:text-zinc-200" : "text-zinc-400 dark:text-zinc-500 line-through decoration-zinc-300 dark:decoration-zinc-600",
@@ -277,7 +278,7 @@ function PricingCard({ tier, isAnnual, period, currencySymbol, onSelectPlan }: {
           {tier.badge && (
             <div className="absolute -top-4 left-1/2 -translate-x-1/2">
               <Badge className="gap-1.5 whitespace-nowrap bg-gradient-to-r from-violet-600 to-blue-500 px-3.5 py-1 text-xs font-semibold text-white shadow-lg shadow-violet-500/30 border-0">
-                <Star className="h-3 w-3 fill-current shrink-0" strokeWidth={0} /> {tier.badge}
+                <Star className="h-3 w-3 fill-current shrink-0" weight="fill" /> {tier.badge}
               </Badge>
             </div>
           )}
@@ -322,7 +323,7 @@ function PricingCard({ tier, isAnnual, period, currencySymbol, onSelectPlan }: {
             </div>
             {tier.ctaNote && (
               <p className="mt-2.5 flex items-center justify-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
-                <Lock className="h-3 w-3 shrink-0" strokeWidth={2} />{tier.ctaNote}
+                <Lock className="h-3 w-3 shrink-0" weight="bold" />{tier.ctaNote}
               </p>
             )}
           </div>
@@ -356,6 +357,10 @@ export function PricingTierBlock({
 
   return (
     <section className={cn("relative w-full overflow-hidden px-4 py-24 sm:px-6 lg:px-8", className)} aria-label="Pricing plans">
+      {/* ── Theme Toggle ── */}
+      <div className="absolute top-6 right-6 z-50">
+        <ThemeToggle />
+      </div>
 
       {/* ── Floating orbs ── */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
@@ -413,7 +418,7 @@ export function PricingTierBlock({
               {isAnnual && (
                 <motion.span initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
                   className="inline-flex items-center gap-1 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:border-emerald-500/40 dark:text-emerald-300">
-                  <CircleDollarSign className="h-3 w-3 shrink-0" strokeWidth={2} /> Save up to 20%
+                  <CircleDollarSign className="h-3 w-3 shrink-0" weight="bold" /> Save up to 20%
                 </motion.span>
               )}
             </AnimatePresence>
