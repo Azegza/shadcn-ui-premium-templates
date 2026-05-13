@@ -62,6 +62,16 @@ function StatCard({ title, value, trend, trendValue, icon: Icon }: any) {
 
 export function MetricsDashboardStandard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const stats = [
+    { title: "Total Revenue", value: "$128,430", trend: "up", trendValue: "12.5%", icon: CurrencyDollar },
+    { title: "Active Users", value: "43,520", trend: "up", trendValue: "8.2%", icon: Users },
+    { title: "Conversion", value: "3.42%", trend: "down", trendValue: "1.1%", icon: ChartLineUp },
+    { title: "Sessions", value: "4m 32s", trend: "up", trendValue: "24%", icon: Layout },
+  ];
+
+  const filteredStats = stats.filter(s => s.title.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
     <div className="flex min-h-screen bg-zinc-50 dark:bg-zinc-950">
@@ -100,7 +110,12 @@ export function MetricsDashboardStandard() {
           <div className="flex items-center gap-4 flex-1">
             <div className="relative max-w-xs w-full">
               <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={16} />
-              <Input placeholder="Search metrics..." className="pl-9 bg-zinc-50 dark:bg-zinc-900" />
+              <Input 
+                placeholder="Search metrics..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 bg-zinc-50 dark:bg-zinc-900" 
+              />
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -119,10 +134,9 @@ export function MetricsDashboardStandard() {
           </div>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-            <StatCard title="Total Revenue" value="$128,430" trend="up" trendValue="12.5%" icon={CurrencyDollar} />
-            <StatCard title="Active Users" value="43,520" trend="up" trendValue="8.2%" icon={Users} />
-            <StatCard title="Conversion" value="3.42%" trend="down" trendValue="1.1%" icon={ChartLineUp} />
-            <StatCard title="Sessions" value="4m 32s" trend="up" trendValue="24%" icon={Layout} />
+            {filteredStats.map((stat) => (
+              <StatCard key={stat.title} {...stat} />
+            ))}
           </div>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

@@ -50,8 +50,8 @@ function PricingCard({ tier, isAnnual }: { tier: Tier; isAnnual: boolean }) {
     <Card className={cn(
       "relative flex flex-col transition-all duration-200",
       tier.highlighted 
-        ? "border-2 border-violet-600 shadow-lg scale-105 z-10 dark:border-violet-500" 
-        : "border-zinc-200 shadow-sm hover:border-zinc-300 dark:border-zinc-800 dark:hover:border-zinc-700"
+        ? "border-2 border-violet-600 shadow-lg z-10 dark:border-violet-500" 
+        : "border-zinc-200 shadow-sm dark:border-zinc-800"
     )}>
       {tier.badge && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
@@ -63,7 +63,7 @@ function PricingCard({ tier, isAnnual }: { tier: Tier; isAnnual: boolean }) {
       
       <CardHeader>
         <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
-          <tier.icon size={24} weight="duotone" />
+          <tier.icon size={24} />
         </div>
         <CardTitle className="text-xl">{tier.name}</CardTitle>
         <CardDescription>{tier.description}</CardDescription>
