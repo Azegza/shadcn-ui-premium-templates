@@ -44,13 +44,15 @@ npx shadcn@latest add https://raw.githubusercontent.com/Azegza/shadcn-ui-premium
 
 ## 🔥 Upgrade to Premium (Engineered UI)
 
-Want the "Sizzle"? Our **Premium Pack** includes:
-- 🧊 **3D Magnetic Tilts**: Interactive components that follow your cursor.
-- ☄️ **Meteor Borders**: Custom GPU-accelerated border animations.
-- 🧪 **Advanced Logic**: Full React Server Component support and skeleton states.
-- 🛠️ **Priority Support**: Direct access to the engineering team.
+The **Premium Pack** isn't just about looks—it's a high-performance framework for building 2026-standard applications.
 
-**[👉 Get the Full Pack on Gumroad](https://gumroad.com/)**
+- **🤖 AI-Agent Optimized (MCP Ready)**: Every component is architected with clean semantics and structured logic that makes it 100% compatible with AI coding agents (Cursor, Claude Code, Windsurf). No more hallucinated props.
+- **🧊 3D Magnetic Physics**: Interactive UI that reacts to mouse movement with hardware-accelerated 3D transforms.
+- **☄️ Meteor Borders**: Custom GPU-accelerated "spinning" border animations that stay perfectly clipped.
+- **🧪 Advanced Logic Blocks**: Full React Server Component (RSC) support, Zod-validated forms, and enterprise-grade state management.
+- **⚡ Zero-Config Skeletons**: Built-in loading states and skeleton patterns for a seamless UX.
+
+**[👉 Unlock the Full Premium Pack on Gumroad](https://gumroad.com/)**
 
 ---
 
