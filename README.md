@@ -39,6 +39,7 @@ npx shadcn@latest add https://raw.githubusercontent.com/Azegza/shadcn-ui-premium
 - **Zero Runtime Bloat**: Uses standard Tailwind CSS and Phosphor Icons.
 - **Accessibility First**: WCAG 2.1 AA compliant out of the box.
 - **TypeScript Native**: Full type-safety for every component.
+- **Dark/Light Mode**: Seamless theme switching support built-in.
 
 ---
 
