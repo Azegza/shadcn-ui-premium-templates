@@ -66,4 +66,4 @@ All components are available in the Lite version. The **Premium Pack** adds 3D m
 ## 🛡️ License
 MIT License. Feel free to use these in your personal or commercial projects.
 
-*Built by [Antigravity](https://google.com)*
+*Built by [Azegza](https://www.abderrahimazgza.com)*
