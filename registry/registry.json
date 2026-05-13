@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "shadcn-blocks-lite",
+  "homepage": "https://github.com/Azegza/shadcn-ui-premium-templates",
+  "items": [
+    {
+      "name": "aura-pricing-lite",
+      "type": "registry:block",
+      "title": "Aura Pricing (Lite)",
+      "description": "A clean, functional pricing section. Perfect for basic landing pages. High-contrast and accessible.",
+      "dependencies": ["@phosphor-icons/react"],
+      "registryDependencies": ["button", "card", "badge", "switch"],
+      "files": [{ "path": "registry/standard/pricing-tier.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "zenith-onboarding-lite",
+      "type": "registry:block",
+      "title": "Zenith Onboarding (Lite)",
+      "description": "Standard multi-step onboarding wizard with progress indicators and Zod validation.",
+      "dependencies": ["zod", "react-hook-form", "@hookform/resolvers", "@phosphor-icons/react"],
+      "registryDependencies": ["button", "input", "label"],
+      "files": [{ "path": "registry/standard/onboarding-flow.tsx", "type": "registry:component" }]
+    },
+    {
+      "name": "nova-dashboard-lite",
+      "type": "registry:block",
+      "title": "Nova Dashboard (Lite)",
+      "description": "Functional SaaS dashboard layout with sidebar navigation and basic metric cards.",
+      "dependencies": ["@phosphor-icons/react"],
+      "registryDependencies": ["button", "card", "input", "badge"],
+      "files": [{ "path": "registry/standard/metrics-dashboard.tsx", "type": "registry:component" }]
+    }
+  ]
+}
