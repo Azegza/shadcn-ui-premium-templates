@@ -34,24 +34,30 @@ npx shadcn@latest add https://raw.githubusercontent.com/Azegza/shadcn-ui-premium
 
 ---
 
+## 🌓 Dark/Light Mode
+
+All Lite components automatically adapt to the user's OS theme using Tailwind's `dark:` variant. No additional configuration required.
+
+
+---
+
 ## ✨ Why Choose Lite?
 
 - **Zero Runtime Bloat**: Uses standard Tailwind CSS and Phosphor Icons.
 - **Accessibility First**: WCAG 2.1 AA compliant out of the box.
 - **TypeScript Native**: Full type-safety for every component.
-- **Dark/Light Mode**: Seamless theme switching support built-in.
 
 ---
 
 ## 🔥 Upgrade to Premium (Engineered UI)
 
-The **Premium Pack** isn't just about looks—it's a high-performance framework for building 2026-standard applications.
+All components are available in the Lite version. The **Premium Pack** adds 3D magnetic physics, Framer Motion animations, and other advanced visual effects to elevate your UI.
 
-- **🤖 AI-Agent Optimized (MCP Ready)**: Every component is architected with clean semantics and structured logic that makes it 100% compatible with AI coding agents (Cursor, Claude Code, Windsurf). No more hallucinated props.
-- **🧊 3D Magnetic Physics**: Interactive UI that reacts to mouse movement with hardware-accelerated 3D transforms.
-- **☄️ Meteor Borders**: Custom GPU-accelerated "spinning" border animations that stay perfectly clipped.
-- **🧪 Advanced Logic Blocks**: Full React Server Component (RSC) support, Zod-validated forms, and enterprise-grade state management.
-- **⚡ Zero-Config Skeletons**: Built-in loading states and skeleton patterns for a seamless UX.
+- **🤖 AI-Agent Optimized (MCP Ready)**: Clean semantics for AI coding agents.
+- **🧊 3D Magnetic Physics & Framer Motion**: Hardware‑accelerated 3D transforms and smooth motion.
+- **☄️ Meteor Borders**: GPU‑accelerated border animations.
+- **🧪 Advanced Logic Blocks**: RSC, Zod validation, and enterprise‑grade state management.
+- **⚡ Zero‑Config Skeletons**: Built‑in loading states for seamless UX.
 
 **[👉 Unlock the Full Premium Pack on Gumroad](https://gumroad.com/)**
 
