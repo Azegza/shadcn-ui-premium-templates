@@ -1,6 +1,9 @@
-# 🚀 Shadcn UI Blocks (Lite)
+# 🚀 Free Shadcn UI Blocks & Templates (Next.js 15 + Tailwind v4)
 
-Welcome to the **Standard Edition** of our "Engineered UI" library. These blocks are built with a focus on core performance, accessibility, and clean code.
+Welcome to the ultimate collection of **Free Shadcn UI Blocks**. This repository provides high-quality, copy-paste **Shadcn templates** and **SaaS UI components** built for modern developers using Next.js 15, Tailwind CSS v4, and Framer Motion.
+
+> [!TIP]
+> 🔍 **Keywords:** *shadcn blocks, shadcn ui templates, free nextjs components, tailwind css blocks, saas dashboard template free.*
 
 > [!IMPORTANT]
 > This is the **Free / Lite** version of our library. For physics-based animations, 3D interactions, and advanced SaaS layouts, check out the **[Premium Pack on Gumroad](https://gumroad.com/)**.
